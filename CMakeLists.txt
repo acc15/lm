@@ -21,6 +21,3 @@ add_executable(lm_test
     )
 
 target_include_directories(lm_test PUBLIC test deps/Catch/single_include)
-
-enable_testing()
-add_test(NAME lm_test COMMAND lm_test)
