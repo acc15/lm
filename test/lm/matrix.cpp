@@ -32,7 +32,7 @@ TEST_CASE("lu_decomposition", "[matrix]") {
         REQUIRE( lu_decomposition(m) );
 
         float det = m.cell(0, 0) * m.cell(1, 1) * m.cell(2, 2);
-        if (m.permutation_count() & 1 != 0) {
+        if ((m.permutation_count() & 1) != 0) {
             det = -det;
         }
 

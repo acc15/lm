@@ -46,28 +46,28 @@ TEST_CASE("-operator()", "[vec]") {
 TEST_CASE("operator+", "[vec]") {
     vec<3, int> v1 = { 1, 2, 3 };
     REQUIRE( (v1 + vec<3, float>({4, 5, 6})) == (vec<3, int>({5, 7, 9})) );
-    REQUIRE( (v1 + std::initializer_list<float>({ 4.75, 5.32, 6.9 })) == (vec<3, int>({5, 7, 9})) );
+    REQUIRE( (v1 + std::initializer_list<float>({ 4.75f, 5.32f, 6.9f })) == (vec<3, int>({5, 7, 9})) );
     REQUIRE( (v1 + 4) == (vec<3, int>({5, 6, 7})) );
 }
 
 TEST_CASE("operator-", "[vec]") {
     vec<3, int> v1 = { 1, 2, 3 };
     REQUIRE( (v1 - vec<3, float>({6, 5, 4})) == (vec<3, int>({-5, -3, -1})) );
-    REQUIRE( (v1 - std::initializer_list<float>({ 6.75, 5.32, 4.9 })) == (vec<3, int>({-5, -3, -1})) );
+    REQUIRE( (v1 - std::initializer_list<float>({ 6.75f, 5.32f, 4.9f })) == (vec<3, int>({-5, -3, -1})) );
     REQUIRE( (v1 - 2) == (vec<3, int>({-1, 0, 1})) );
 }
 
 TEST_CASE("operator*", "[vec]") {
     vec<3, int> v1 = { 1, 2, 3 };
-    REQUIRE( (v1 * vec<3, float>({3, 2, 1})) == (vec<3, int>({3, 4, 3})) );
-    REQUIRE( (v1 * std::initializer_list<float>({ 3, 2, 1 })) == (vec<3, int>({3, 4, 3})) );
+    REQUIRE( (v1 * vec<3, float>({3.f, 2.f, 1.f})) == (vec<3, int>({3, 4, 3})) );
+    REQUIRE( (v1 * std::initializer_list<float>({ 3.f, 2.f, 1.f })) == (vec<3, int>({3, 4, 3})) );
     REQUIRE( (v1 * 2) == (vec<3, int>({2, 4, 6})) );
 }
 
 TEST_CASE("operator/", "[vec]") {
     vec<3, int> v1 = { 4, 5, 6 };
-    REQUIRE( (v1 / vec<3, float>({1, 2, 3})) == (vec<3, int>({4, 2, 2})) );
-    REQUIRE( (v1 / std::initializer_list<float>({ 1, 2, 3 })) == (vec<3, int>({4, 2, 2})) );
+    REQUIRE( (v1 / vec<3, float>({1.f, 2.f, 3.f})) == (vec<3, int>({4, 2, 2})) );
+    REQUIRE( (v1 / std::initializer_list<float>({ 1.f, 2.f, 3.f })) == (vec<3, int>({4, 2, 2})) );
     REQUIRE( (v1 / 2) == (vec<3, int>({2, 2, 3})) );
 }
 

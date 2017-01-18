@@ -1,6 +1,8 @@
+#include <array>
+#include <vector>
+
 #include <catch.hpp>
 #include <lm/range.h>
-#include <vector>
 
 using lm::range;
 

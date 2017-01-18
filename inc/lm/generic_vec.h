@@ -2,6 +2,7 @@
 
 #include <array>
 #include <algorithm>
+#include <functional>
 #include <cmath>
 
 #include <lm/algorithm.h>
@@ -42,15 +43,15 @@ public:
     }
 
     value_type length() const {
-        return sqrt(length_square());
+        return static_cast<value_type>(sqrt(length_square()));
     }
 
     template <typename Vec>
     value_type scalar_product(const Vec& other) {
 
-        auto r = range(other, base_type::size()),
-             b = base_type::begin(), e = base_type::end(),
-             rb = r.begin(), re = r.end();
+		auto r = range(other, base_type::size());
+		auto b = base_type::begin(), e = base_type::end();
+		auto rb = r.begin(), re = r.end();
 
         value_type product = value_type();
         while (b != e && rb != re) {
@@ -64,12 +65,12 @@ public:
     template <typename Other>
     vec_type& operator=(const Other& other) {
 
-        auto r = range(other, base_type::size()),
-            b = base_type::begin(), e = base_type::end(),
-            rb = r.begin(), re = r.end();
+		auto r = range(other, base_type::size());
+		auto b = base_type::begin(), e = base_type::end();
+		auto rb = r.begin(), re = r.end(); 
 
         while (b != e && rb != re) {
-            *b = *rb;
+            *b = static_cast<value_type>(*rb);
             ++b;
             ++rb;
         }

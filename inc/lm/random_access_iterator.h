@@ -8,9 +8,13 @@ namespace lm {
 template <typename Container, typename Element, bool Dir = true>
 class random_access_iterator {
 public:
-    typedef Container container_type;
-
+    
+	
+	typedef Container container_type;
     typedef random_access_iterator iterator;
+
+	typedef iterator _Unchecked_type;
+
 
     typedef size_t difference_type;
     typedef Element value_type;
