@@ -39,6 +39,15 @@ TEST_CASE("array_matrix_storage", "[matrix]") {
 
 }
 
+TEST_CASE("initializer_list", "[matrix]") {
+
+    array_matrix<float, 3, 3> m1 = {1,2,3,4,5,6,7,8,9};
+    array_matrix<float, 3, 3> m2 = {{1,2,3},{4,5,6},{7,8,9}};
+    // single initializer_list isn't supported as there is no info about matrix Layout
+    vector_matrix<float> m3 = {{1,2,3},{4,5,6},{7,8,9}};
+
+}
+
 TEST_CASE("lu_decomposition", "[matrix]") {
 
     float test_matricies[][3][3] = {
@@ -62,7 +71,7 @@ TEST_CASE("lu_decomposition", "[matrix]") {
     float expected_det[] = { -27.f, 204.f, 54.f };
     for (size_t i = 0; i < sizeof(expected_det) / sizeof(float); i++) {
 
-        array_matrix<float, 3, 3> m(test_matricies[i]);
+        vector_matrix<float> m(test_matricies[i]);
         permutation_matrix<decltype(m)> pm(m);
 
         REQUIRE( lu_decomposition(pm) );

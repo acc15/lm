@@ -118,12 +118,27 @@ public:
         Cols = MT::Cols
     };
 
+    typedef matrix<static_matrix_storage<M, MT>> matrix_type;
+
+
     static_matrix_storage() = default;
+
+    // initializer constructor
+    template <typename T>
+    static_matrix_storage(const std::initializer_list<std::initializer_list<T>>& m) {
+        static_cast<matrix_type*>(this)->assign(m);
+    }
+
+    // initializer constructor
+    template <typename T, typename Traits = initializer_matrix_traits<T, Rows, Cols, row_major_layout>>
+    static_matrix_storage(const std::initializer_list<T>& m) {
+        static_cast<matrix_type*>(this)->template assign<const std::initializer_list<T>, Traits>(m);
+    }
 
     // copy constructor
     template <typename T, typename Traits = matrix_traits<T>>
     static_matrix_storage(const T& other) {
-        static_cast<matrix<static_matrix_storage<M, MT>>*>(this)->template assign<T, Traits>(other);
+        static_cast<matrix_type*>(this)->template assign<T, Traits>(other);
     }
 
     // reference constructor
@@ -133,9 +148,9 @@ public:
 
     template <size_t Rows, size_t Cols>
     struct with_size {
-        typedef static_matrix_storage<
-            typename MT::template with_size<Rows, Cols>::traits::matrix_type,
-            typename MT::template with_size<Rows, Cols>::traits> matrix_type;
+        typedef matrix< static_matrix_storage<
+            typename MT::template with_size<Rows, Cols>::traits::type,
+            typename MT::template with_size<Rows, Cols>::traits> > type;
     };
 
     size_t rows() const {
@@ -181,12 +196,20 @@ public:
         Cols = 0
     };
 
+    typedef matrix<flat_dynamic_storage<M, L>> matrix_type;
+
     flat_dynamic_storage() : _r(0), _c(0) {}
 
+    // initializer constructor
+    template <typename T>
+    flat_dynamic_storage(const std::initializer_list<std::initializer_list<T>>& m) {
+        static_cast<matrix_type*>(this)->assign(m);
+    }
+
     // copy constructor
-    template <typename T, typename Traits>
+    template <typename T, typename Traits = matrix_traits<T>>
     flat_dynamic_storage(const T& other) {
-        static_cast<matrix<flat_dynamic_storage<M, L>>*>(this)->template assign<T, Traits>(other);
+        static_cast<matrix_type*>(this)->template assign<T, Traits>(other);
     }
 
     // reference constructor
@@ -238,6 +261,8 @@ public:
         Cols = M::Cols
     };
 
+    typedef matrix<transposed_storage<M>> matrix_type;
+
     transposed_storage(M& ref) : _m(ref) {
     }
 
@@ -276,6 +301,8 @@ public:
         Cols = M::Cols
     };
 
+    typedef matrix<permutation_storage<M>> matrix_type;
+
     permutation_storage(M& ref) : _m(ref) {
         reset();
     }
@@ -306,12 +333,11 @@ public:
     }
 
     void reset() {
+        _c = 0;
         resize_p(rows());
         for (size_t i = 0; i < rows(); i++) {
             _p[i] = i;
         }
-        _c = 0;
-
     }
 
     size_t permutation_count() const {
@@ -351,22 +377,25 @@ private:
 };
 
 template <typename T, size_t Rows, size_t Cols>
-using array_matrix = matrix< static_matrix_storage<T[Rows][Cols]> >;
+using array_matrix = typename static_matrix_storage<T[Rows][Cols]>::matrix_type;
 
 template <typename T, size_t Rows, size_t Cols, typename Layout = row_major_layout>
-using flat_array_matrix = matrix< static_matrix_storage<T[Rows * Cols], array_matrix_traits<T, Rows, Cols, Layout>> >;
+using flat_array_matrix = typename static_matrix_storage<T[Rows * Cols], array_matrix_traits<T, Rows, Cols, Layout>>::matrix_type;
 
 template <typename M, typename MT = matrix_traits<M>>
-using static_matrix = matrix< static_matrix_storage<M, MT> >;
+using static_matrix = typename static_matrix_storage<M, MT>::matrix_type;
 
 template <typename M, typename L = row_major_layout>
-using flat_dynamic_matrix = matrix< flat_dynamic_storage<M, L> >;
+using flat_dynamic_matrix = typename flat_dynamic_storage<M, L>::matrix_type;
+
+template <typename T, typename L = row_major_layout>
+using vector_matrix = typename flat_dynamic_storage<std::vector<T>, L>::matrix_type;
 
 template <typename M>
-using transposed_matrix = matrix< transposed_storage<M> >;
+using transposed_matrix = typename transposed_storage<M>::matrix_type;
 
 template <typename M>
-using permutation_matrix = matrix< permutation_storage<M> >;
+using permutation_matrix = typename permutation_storage<M>::matrix_type;
 
 
 }
