@@ -43,10 +43,30 @@ TEST_CASE("initializer_list", "[matrix]") {
 
     array_matrix<float, 3, 3> m1 = {1,2,3,4,5,6,7,8,9};
     array_matrix<float, 3, 3> m2 = {{1,2,3},{4,5,6},{7,8,9}};
-    // single initializer_list isn't supported as there is no info about matrix Layout
+    // single initializer_list not supported as there is no info about row and col amounts
     vector_matrix<float> m3 = {{1,2,3},{4,5,6},{7,8,9}};
 
+    REQUIRE( m1(0, 0) == 1 );
+    REQUIRE( m1(0, 1) == 2 );
+    REQUIRE( m1(0, 2) == 3 );
+    REQUIRE( m1(1, 0) == 4 );
+    REQUIRE( m1(1, 1) == 5 );
+    REQUIRE( m1(1, 2) == 6 );
+    REQUIRE( m1(2, 0) == 7 );
+    REQUIRE( m1(2, 1) == 8 );
+    REQUIRE( m1(2, 2) == 9 );
+
+    REQUIRE( m1 == m2 );
+    REQUIRE( m1 == m3 );
+
 }
+
+TEST_CASE("vector_matrix init size", "[matrix]") {
+    vector_matrix<float> m3(3, 3);
+    REQUIRE( m3.rows() == 3 );
+    REQUIRE( m3.cols() == 3 );
+}
+
 
 TEST_CASE("lu_decomposition", "[matrix]") {
 

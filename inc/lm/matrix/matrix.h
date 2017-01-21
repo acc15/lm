@@ -64,6 +64,21 @@ public:
         return apply<std::minus, T, Traits>(other, std::minus<void>());
     }
 
+    template <typename T, typename Traits = matrix_traits<T>>
+    bool equal(const T& other) {
+        if (S::rows() != Traits::rows(other) || S::cols() != Traits::cols(other)) {
+            return false;
+        }
+        for (size_t i = 0; i < S::rows(); i++) {
+            for (size_t j = 0; j < S::cols(); j++) {
+                if (cell(i, j) != Traits::cell(other, i, j)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 //    template <typename T, typename Traits = matrix_traits<T>>
 //    typename std::conditional<matrix_traits::Static,
 //        std::conditional<Traits::Static,
@@ -103,6 +118,16 @@ public:
     template <typename T, typename Traits = matrix_traits<T>>
     matrix_type& operator-=(const T& other) {
         return subtract<T, Traits>(other);
+    }
+
+    template <typename T, typename Traits = matrix_traits<T>>
+    bool operator==(const T& other) {
+        return equal<T, Traits>(other);
+    }
+
+    template <typename T, typename Traits = matrix_traits<T>>
+    bool operator!=(const T& other) {
+        return !equal<T, Traits>(other);
     }
 
 };
@@ -210,6 +235,10 @@ public:
     template <typename T, typename Traits = matrix_traits<T>>
     flat_dynamic_storage(const T& other) {
         static_cast<matrix_type*>(this)->template assign<T, Traits>(other);
+    }
+
+    flat_dynamic_storage(size_t r, size_t c) {
+        resize(r, c);
     }
 
     // reference constructor
