@@ -64,20 +64,7 @@ public:
 
     template <typename Other>
     vec_type& operator=(const Other& other) {
-
-		auto r = range(other, base_type::size());
-		auto b = base_type::begin(), e = base_type::end();
-		auto rb = r.begin(), re = r.end(); 
-
-        while (b != e && rb != re) {
-            *b = static_cast<value_type>(*rb);
-            ++b;
-            ++rb;
-        }
-        while (b != e) {
-            *b = value_type();
-        }
-        return as_vec();
+        return transform(other, return_2nd());
     }
 
     template <typename Other>
@@ -95,7 +82,7 @@ public:
     }
 
     vec_type& negate() {
-        std::transform(base_type::begin(), base_type::end(), base_type::begin(), std::negate<value_type>());
+        std::transform(base_type::begin(), base_type::end(), base_type::begin(), std::negate<void>());
         return as_vec();
     }
 
@@ -105,22 +92,22 @@ public:
 
     template <typename Other>
     vec_type& operator+=(const Other& other) {
-        return transform(other, std::plus<value_type>());
+        return transform(other, std::plus<void>());
     }
 
     template <typename Other>
     vec_type& operator-=(const Other& other) {
-        return transform(other, std::minus<value_type>());
+        return transform(other, std::minus<void>());
     }
 
     template <typename Other>
     vec_type& operator*=(const Other& other) {
-        return transform(other, std::multiplies<value_type>());
+        return transform(other, std::multiplies<void>());
     }
 
     template <typename Other>
     vec_type& operator/=(const Other& other) {
-        return transform(other, std::divides<value_type>());
+        return transform(other, std::divides<void>());
     }
 
     template <typename Other>

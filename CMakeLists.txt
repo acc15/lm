@@ -9,7 +9,10 @@ set(SOURCE_FILES
     inc/lm/algorithm.h
     inc/lm/generic_vec.h
     inc/lm/vec.h
-    inc/lm/matrix.h
+    inc/lm/matrix/algorithms.h
+    inc/lm/matrix/layout.h
+    inc/lm/matrix/traits.h
+    inc/lm/matrix/matrix.h
     )
 
 add_executable(lm_test

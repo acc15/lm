@@ -10,7 +10,7 @@ OIter transform(Iter1 begin1, Iter1 end1, Iter2 begin2, Iter2 end2, OIter out, F
     typedef typename std::remove_reference< decltype(*out) >::type out_type;
 
     while (begin1 != end1 && begin2 != end2) {
-        *out = static_cast<out_type>( func(static_cast<out_type>(*begin1), static_cast<out_type>(*begin2)) );
+        *out = func(*begin1, *begin2);
         ++begin1;
         ++begin2;
         ++out;
@@ -18,6 +18,13 @@ OIter transform(Iter1 begin1, Iter1 end1, Iter2 begin2, Iter2 end2, OIter out, F
     return out;
 }
 
+struct return_2nd {
 
+    template <typename T1, typename T2>
+    const T2& operator()(const T1&/* v1*/, const T2& v2) {
+        return v2;
+    }
+
+};
 
 }
