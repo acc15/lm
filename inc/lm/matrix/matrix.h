@@ -5,7 +5,7 @@
 #include <type_traits>
 
 #include <lm/algorithm.h>
-#include <lm/matrix/algorithms.h>
+#include <lm/matrix/algorithm.h>
 #include <lm/matrix/layout.h>
 #include <lm/matrix/traits.h>
 
