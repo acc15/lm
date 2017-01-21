@@ -9,6 +9,7 @@ template <typename Container, typename Element, bool Dir = true>
 class random_access_iterator {
 public:
     
+	static const size_t REND = static_cast<size_t>(-1);
 	
 	typedef Container container_type;
     typedef random_access_iterator iterator;
@@ -29,8 +30,8 @@ public:
     iterator& operator=(const iterator& other) { _container = other._container; _index = other._index; return *this; }
     bool operator==(const iterator& other) const { return _container == other._container && _index == other._index; }
     bool operator!=(const iterator& other) const { return !operator==(other); }
-    bool operator<(const iterator& other) const { return Dir ? _index < other._index : _index > other._index; }
-    bool operator>(const iterator& other) const { return Dir ? _index > other._index : _index < other._index; }
+    bool operator<(const iterator& other) const { return Dir ? _index < other._index : _index != REND && _index > other._index; }
+    bool operator>(const iterator& other) const { return Dir ? _index > other._index : _index == REND || _index < other._index; }
     bool operator<=(const iterator& other) const { return !operator>(other); }
     bool operator>=(const iterator& other) const { return !operator<(other); }
 

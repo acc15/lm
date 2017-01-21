@@ -61,7 +61,7 @@ public:
     }
 
     reverse_iterator rend() {
-        return reverse_iterator(impl(), -1);
+        return reverse_iterator(impl(), reverse_iterator::REND);
     }
 
     const_reverse_iterator rbegin() const {
@@ -69,7 +69,7 @@ public:
     }
 
     const_reverse_iterator rend() const {
-        return const_reverse_iterator(impl(), -1);
+        return const_reverse_iterator(impl(), const_reverse_iterator::REND);
     }
 
     const_reverse_iterator crbegin() const {
@@ -77,7 +77,7 @@ public:
     }
 
     const_reverse_iterator crend() const {
-        return const_reverse_iterator(impl(), -1);
+        return const_reverse_iterator(impl(), const_reverse_iterator::REND);
     }
 
 private:
