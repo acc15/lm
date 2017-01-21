@@ -56,12 +56,12 @@ public:
 
     template <typename T, typename Traits = matrix_traits<T>>
     matrix_type& add(const T& other) {
-        return apply<std::plus, T, Traits>(other, std::plus<void>());
+        return apply<std::plus<void>, T, Traits>(other, std::plus<void>());
     }
 
     template <typename T, typename Traits = matrix_traits<T>>
     matrix_type& subtract(const T& other) {
-        return apply<std::minus, T, Traits>(other, std::minus<void>());
+        return apply<std::minus<void>, T, Traits>(other, std::minus<void>());
     }
 
     template <typename T, typename Traits = matrix_traits<T>>
@@ -79,31 +79,25 @@ public:
         return true;
     }
 
-//    template <typename T, typename Traits = matrix_traits<T>>
-//    typename std::conditional<matrix_traits::Static,
-//        std::conditional<Traits::Static,
-//            matrix_traits::with_size<matrix_traits::Rows, Traits::Cols>::type,
-//            Traits::type>::type,
-//        matrix_traits::type>::type product(const T& other) const {
+    template <typename T, typename Traits = matrix_traits<T>, typename P = typename matrix_product<matrix_type, T, Traits>::matrix_type>
+    void product(const T& other, P& p) const {
+        return lm::product<T, Traits, P>(*this, other, p);
+    }
 
-//        typename std::conditional<matrix_traits::Static,
-//            std::conditional<Traits::Static,
-//                matrix_traits::with_size<matrix_traits::Rows, Traits::Cols>::type,
-//                Traits::type>::type,
-//            matrix_traits::type>::type result;
+    template <typename T, typename Traits = matrix_traits<T>, typename P = typename matrix_product<matrix_type, T, Traits>::matrix_type>
+    P product(const T& other) const {
+        return lm::product<T, Traits, P>(*this, other);
+    }
 
-//        result.resize(rows(), other.cols());
-//        for (size_t i = 0; i < result.rows(); i++) {
-//            for (size_t j = 0; j < result.cols(); j++) {
-//                value_type sum = 0;
-//                for (size_t k = 0; k < cols(); k++) {
-//                    sum += cell(i, k) * other(k, j);
-//                }
-//                result(i, j) = sum;
-//            }
-//        }
-//        return result;
-//    }
+    template <typename P = typename matrix_transpose<matrix_type>::matrix_type>
+    void transpose(P& p) const {
+        return lm::transpose<matrix_type, P>(*this, p);
+    }
+
+    template <typename P = typename matrix_transpose<matrix_type>::matrix_type>
+    P transpose() const {
+        return lm::transpose<matrix_type, P>(*this);
+    }
 
     template <typename T, typename Traits = matrix_traits<T>>
     matrix_type& operator=(const T& other) {
@@ -119,6 +113,24 @@ public:
     matrix_type& operator-=(const T& other) {
         return subtract<T, Traits>(other);
     }
+
+    template <typename T, typename Traits = matrix_traits<T>>
+    matrix_type operator+(const T& other) {
+        matrix_type result(*this);
+        result.add<T, Traits>(other);
+        return result;
+    }
+
+    template <typename T, typename Traits = matrix_traits<T>>
+    matrix_type operator-(const T& other) {
+        return matrix_type(*this) -= other;
+    }
+
+    template <typename T, typename Traits = matrix_traits<T>, typename P = typename matrix_product<matrix_type, T, Traits>::matrix_type>
+    P operator*(const T& other) {
+        return product<T, Traits, P>(other);
+    }
+
 
     template <typename T, typename Traits = matrix_traits<T>>
     bool operator==(const T& other) {
@@ -143,6 +155,7 @@ public:
     };
 
     typedef matrix<static_matrix_storage<M, MT>> matrix_type;
+    typedef matrix<static_matrix_storage<M&, MT>> ref;
 
 
     static_matrix_storage() = default;
@@ -219,6 +232,7 @@ public:
     };
 
     typedef matrix<flat_dynamic_storage<M, L>> matrix_type;
+    typedef matrix<flat_dynamic_storage<M&, L>> ref;
 
     flat_dynamic_storage() : _r(0), _c(0) {}
 
@@ -405,6 +419,9 @@ using array_matrix = typename static_matrix_storage<T[Rows][Cols]>::matrix_type;
 
 template <typename T, size_t Rows, size_t Cols, typename Layout = row_major_layout>
 using flat_array_matrix = typename static_matrix_storage<T[Rows * Cols], array_matrix_traits<T, Rows, Cols, Layout>>::matrix_type;
+
+template <template <class,size_t> class V, typename T, size_t Rows, size_t Cols, typename Layout = row_major_layout>
+using container_matrix = typename static_matrix_storage<V<T,Rows*Cols>, container_matrix_traits<V,T,Rows,Cols,Layout>>::matrix_type;
 
 template <typename M, typename MT = matrix_traits<M>>
 using static_matrix = typename static_matrix_storage<M, MT>::matrix_type;

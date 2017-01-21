@@ -69,6 +69,48 @@ TEST_CASE("vector_matrix init size", "[matrix]") {
     REQUIRE( m3.cols() == 3 );
 }
 
+TEST_CASE("add", "[matrix]") {
+
+    array_matrix<float, 3, 3> m1 = {1,2,3,4,5,6,7,8,9};
+    array_matrix<float, 3, 3> m2 = m1;
+
+    array_matrix<float, 3, 3> a1 = m1 + m2;
+    array_matrix<float, 3, 3> a2 = m1;
+    a2 += m2;
+
+    array_matrix<float, 3, 3> a3 = m1;
+    a3.add(m2);
+
+    array_matrix<float, 3, 3> e = {
+        { 2, 4, 6 },
+        { 8, 10, 12 },
+        { 14, 16, 18 }
+    };
+
+    REQUIRE(a1 == e);
+    REQUIRE(a2 == e);
+    REQUIRE(a3 == e);
+}
+
+TEST_CASE("subtract", "[matrix]") {
+
+    array_matrix<float, 3, 3> m1 = {2,4,6,8,10,12,14,16,18};
+    array_matrix<float, 3, 3> m2 = {1,2,3,4,5,6,7,8,9};
+
+    array_matrix<float, 3, 3> a1 = m1 - m2;
+    array_matrix<float, 3, 3> a2 = m1;
+    a2 -= m2;
+
+    array_matrix<float, 3, 3> a3 = m1;
+    a3.subtract(m2);
+
+    array_matrix<float, 3, 3> e = {1,2,3,4,5,6,7,8,9};
+
+    REQUIRE(a1 == e);
+    REQUIRE(a2 == e);
+    REQUIRE(a3 == e);
+}
+
 TEST_CASE("product", "[matrix]") {
 
     array_matrix<float, 3, 3> m1 = {1,2,3,4,5,6,7,8,9};
@@ -95,12 +137,26 @@ TEST_CASE("product", "[matrix]") {
 
 }
 
-TEST_CASE("vec_matrix", "[matrix]") {
+TEST_CASE("transpose", "[matrix]") {
+
+    array_matrix<float, 2, 3> m1 = {1,2,3,4,5,6};
+    array_matrix<float, 3, 2> a = m1.transpose();
+
+    // 1 2 3
+    // 4 5 6
+
+    // 1 4
+    // 2 5
+    // 3 6
+    array_matrix<float, 3, 2> e = {1,4,2,5,3,6};
+    REQUIRE(a == e);
+}
+
+TEST_CASE("container_matrix", "[matrix]") {
 
     std::array<float, 9> x;
 
-    static_matrix<std::array<float, 9>&, container_matrix_traits<std::array, float, 3, 3, row_major_layout> > m(x);
-
+    typename container_matrix<std::array, float, 3, 3>::ref m(x);
     m.assign<std::initializer_list<float>, range_matrix_traits<std::initializer_list<float>, 3, 3>>({ 1, 2, 3, 4, 5, 6, 7, 8, 9});
 
     for (size_t i = 0; i < x.size(); i++) {
