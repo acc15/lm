@@ -1,6 +1,8 @@
 #include <catch.hpp>
 #include <lm/matrix/matrix.h>
 
+#include <lm/vec.h>
+
 #include <vector>
 
 using namespace lm;
@@ -67,6 +69,44 @@ TEST_CASE("vector_matrix init size", "[matrix]") {
     REQUIRE( m3.cols() == 3 );
 }
 
+TEST_CASE("product", "[matrix]") {
+
+    array_matrix<float, 3, 3> m1 = {1,2,3,4,5,6,7,8,9};
+    array_matrix<float, 3, 3> m2 = m1;
+
+    vector_matrix<float> v1 = m1;
+    vector_matrix<float> v2 = m1;
+
+    array_matrix<float, 3, 3> a1 = product(m1, m2);
+    vector_matrix<float> a2 = product(m1, v1);
+    vector_matrix<float> a3 = product(v1, v2);
+    vector_matrix<float> a4 = product(v1, m1);
+
+    array_matrix<float, 3, 3> e = {
+        { 30, 36, 42 },
+        { 66, 81, 96 },
+        { 102, 126, 150 }
+    };
+
+    REQUIRE(a1 == e);
+    REQUIRE(a2 == e);
+    REQUIRE(a3 == e);
+    REQUIRE(a4 == e);
+
+}
+
+TEST_CASE("vec_matrix", "[matrix]") {
+
+    std::array<float, 9> x;
+
+    static_matrix<std::array<float, 9>&, container_matrix_traits<std::array, float, 3, 3, row_major_layout> > m(x);
+
+    m.assign<std::initializer_list<float>, range_matrix_traits<std::initializer_list<float>, 3, 3>>({ 1, 2, 3, 4, 5, 6, 7, 8, 9});
+
+    for (size_t i = 0; i < x.size(); i++) {
+        REQUIRE(x[i] == i + 1);
+    }
+}
 
 TEST_CASE("lu_decomposition", "[matrix]") {
 

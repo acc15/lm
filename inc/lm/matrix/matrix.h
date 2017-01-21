@@ -138,7 +138,6 @@ public:
     typedef typename MT::value_type value_type;
 
     enum {
-        Static = MT::Static,
         Rows = MT::Rows,
         Cols = MT::Cols
     };
@@ -155,7 +154,7 @@ public:
     }
 
     // initializer constructor
-    template <typename T, typename Traits = initializer_matrix_traits<T, Rows, Cols, row_major_layout>>
+    template <typename T, typename Traits = range_matrix_traits<std::initializer_list<T>, Rows, Cols, row_major_layout>>
     static_matrix_storage(const std::initializer_list<T>& m) {
         static_cast<matrix_type*>(this)->template assign<const std::initializer_list<T>, Traits>(m);
     }
@@ -173,9 +172,8 @@ public:
 
     template <size_t Rows, size_t Cols>
     struct with_size {
-        typedef matrix< static_matrix_storage<
-            typename MT::template with_size<Rows, Cols>::traits::type,
-            typename MT::template with_size<Rows, Cols>::traits> > type;
+        typedef typename MT::template with_size<Rows, Cols>::traits traits;
+        typedef typename static_matrix_storage<typename traits::matrix_type, traits>::matrix_type matrix_type;
     };
 
     size_t rows() const {
@@ -216,7 +214,6 @@ public:
     typedef typename M::value_type value_type;
 
     enum {
-        Static = false,
         Rows = 0,
         Cols = 0
     };
@@ -285,7 +282,6 @@ public:
     typedef typename M::value_type value_type;
 
     enum {
-        Static = M::Static,
         Rows = M::Rows,
         Cols = M::Cols
     };
@@ -325,7 +321,6 @@ public:
     typedef typename M::value_type value_type;
 
     enum {
-        Static = M::Static,
         Rows = M::Rows,
         Cols = M::Cols
     };
@@ -393,7 +388,7 @@ private:
         }
     };
 
-    typedef typename std::conditional<Static, static_vec, dynamic_vec>::type vec_traits;
+    typedef typename std::conditional<Rows != 0, static_vec, dynamic_vec>::type vec_traits;
 
     void resize_p(size_t sz) {
         vec_traits::resize(_p, sz);

@@ -11,7 +11,6 @@ struct matrix_traits {
     typedef typename T::value_type value_type;
 
     enum {
-        Static = T::Static,
         Rows = T::Rows,
         Cols = T::Cols
     };
@@ -43,7 +42,6 @@ struct matrix_traits<T, typename std::enable_if<
     typedef typename std::remove_all_extents< matrix_type >::type value_type;
 
     enum {
-        Static = true,
         Rows = std::extent<matrix_type, 0>::value,
         Cols = std::extent<matrix_type, 1>::value
     };
@@ -92,22 +90,20 @@ struct matrix_traits<std::initializer_list<std::initializer_list<T>>> {
 
 };
 
-template <typename T, size_t R, size_t C, typename Layout = row_major_layout>
-struct initializer_matrix_traits {
+template <typename V, size_t R, size_t C, typename Layout = row_major_layout>
+struct range_matrix_traits {
 
-    typedef T value_type;
-    typedef std::initializer_list<T> matrix_type;
+    typedef typename V::value_type value_type;
+    typedef V matrix_type;
 
     enum {
-        Static = true,
         Rows = R,
         Cols = C
     };
 
-//    template <size_t Rows, size_t Cols>
-//    struct with_size {
-//        typedef flat_matrix_traits<T, Rows, Cols, Layout> traits;
-//    };
+    static const value_type& cell(matrix_type& m, size_t row, size_t col) {
+        return *(m.begin() + Layout::compute_flat_index(row, col, R, C));
+    }
 
     static const value_type& cell(const matrix_type& m, size_t row, size_t col) {
         return *(m.begin() + Layout::compute_flat_index(row, col, R, C));
@@ -123,30 +119,23 @@ struct initializer_matrix_traits {
 
 };
 
+template <typename T, typename V, size_t R, size_t C, typename L>
+struct flat_matrix_traits {
 
-template <typename T, size_t R, size_t C, typename Layout = row_major_layout>
-struct array_matrix_traits {
-
-    typedef T value_type;
-    typedef T matrix_type[R*C];
+    typedef T matrix_type;
+    typedef V value_type;
 
     enum {
-        Static = true,
         Rows = R,
         Cols = C
     };
 
-    template <size_t Rows, size_t Cols>
-    struct with_size {
-        typedef array_matrix_traits<T, Rows, Cols, Layout> traits;
-    };
-
     static const value_type& cell(const matrix_type& m, size_t row, size_t col) {
-        return m[Layout::compute_flat_index(row, col, R, C)];
+        return m[L::compute_flat_index(row, col, R, C)];
     }
 
     static value_type& cell(matrix_type& m, size_t row, size_t col) {
-        return m[Layout::compute_flat_index(row, col, R, C)];
+        return m[L::compute_flat_index(row, col, R, C)];
     }
 
     static size_t rows(const matrix_type& m) {
@@ -156,7 +145,22 @@ struct array_matrix_traits {
     static size_t cols(const matrix_type& m) {
         return Cols;
     }
+};
 
+template <template <class,size_t> class V, typename T, size_t R, size_t C, typename L = row_major_layout>
+struct container_matrix_traits: public flat_matrix_traits<V<T,R*C>,T,R,C,L> {
+    template <size_t Rows, size_t Cols>
+    struct with_size {
+        typedef container_matrix_traits<V, T, Rows, Cols, L> traits;
+    };
+};
+
+template <typename T, size_t R, size_t C, typename L = row_major_layout>
+struct array_matrix_traits: public flat_matrix_traits<T[R*C],T,R,C,L> {
+    template <size_t Rows, size_t Cols>
+    struct with_size {
+        typedef array_matrix_traits<T, Rows, Cols, L> traits;
+    };
 };
 
 
