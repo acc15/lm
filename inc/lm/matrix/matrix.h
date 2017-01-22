@@ -17,7 +17,8 @@ class matrix: public S {
 public:
 
     typedef typename S::value_type value_type;
-    typedef matrix<S> matrix_type;
+    typedef typename S::matrix_type matrix_type;
+    typedef matrix<S> this_type;
 
     using S::S;
 
@@ -26,7 +27,7 @@ public:
     }
 
     const value_type& cell(size_t row, size_t col) const {
-        return const_cast<matrix_type*>(this)->at(row, col);
+        return const_cast<this_type*>(this)->at(row, col);
     }
 
     value_type& operator()(size_t row, size_t col) {
@@ -38,14 +39,14 @@ public:
     }
 
     template <typename T, typename Traits = matrix_traits<T>>
-    matrix_type& assign(const T& other) {
+    this_type& assign(const T& other) {
         S::resize(Traits::rows(other), Traits::cols(other));
         apply<return_2nd, T, Traits>(other, return_2nd());
         return *this;
     }
 
     template <typename F, typename T, typename Traits = matrix_traits<T>>
-    matrix_type& apply(const T& other, F func) {
+    this_type& apply(const T& other, F func) {
         for (size_t i = 0; i < S::rows(); i++) {
             for (size_t j = 0; j < S::cols(); j++) {
                 cell(i, j) = func(cell(i, j), Traits::cell(other, i, j));
@@ -55,12 +56,12 @@ public:
     }
 
     template <typename T, typename Traits = matrix_traits<T>>
-    matrix_type& add(const T& other) {
+    this_type& add(const T& other) {
         return apply<std::plus<void>, T, Traits>(other, std::plus<void>());
     }
 
     template <typename T, typename Traits = matrix_traits<T>>
-    matrix_type& subtract(const T& other) {
+    this_type& subtract(const T& other) {
         return apply<std::minus<void>, T, Traits>(other, std::minus<void>());
     }
 
@@ -90,35 +91,41 @@ public:
     }
 
     template <typename P = typename matrix_transpose<matrix_type>::matrix_type>
-    void transpose(P& p) const {
+    void compute_transposed(P& p) const {
         return lm::transpose<matrix_type, P>(*this, p);
     }
 
     template <typename P = typename matrix_transpose<matrix_type>::matrix_type>
-    P transpose() const {
+    P compute_transposed() const {
         return lm::transpose<matrix_type, P>(*this);
     }
 
+    template <typename P = typename matrix_transpose<matrix_type>::matrix_type,
+               typename = typename std::enable_if<std::is_same<matrix_type, P>::value>::type>
+    this_type& transpose() {
+        P p;
+        compute_transposed(p);
+        return assign(p);
+    }
+
     template <typename T, typename Traits = matrix_traits<T>>
-    matrix_type& operator=(const T& other) {
+    this_type& operator=(const T& other) {
         return assign<T, Traits>(other);
     }
 
     template <typename T, typename Traits = matrix_traits<T>>
-    matrix_type& operator+=(const T& other) {
+    this_type& operator+=(const T& other) {
         return add<T, Traits>(other);
     }
 
     template <typename T, typename Traits = matrix_traits<T>>
-    matrix_type& operator-=(const T& other) {
+    this_type& operator-=(const T& other) {
         return subtract<T, Traits>(other);
     }
 
     template <typename T, typename Traits = matrix_traits<T>>
     matrix_type operator+(const T& other) {
-        matrix_type result(*this);
-        result.add<T, Traits>(other);
-        return result;
+        return matrix_type(*this) += other;
     }
 
     template <typename T, typename Traits = matrix_traits<T>>
@@ -130,7 +137,6 @@ public:
     P operator*(const T& other) {
         return product<T, Traits, P>(other);
     }
-
 
     template <typename T, typename Traits = matrix_traits<T>>
     bool operator==(const T& other) {
@@ -154,9 +160,9 @@ public:
         Cols = MT::Cols
     };
 
-    typedef matrix<static_matrix_storage<M, MT>> matrix_type;
-    typedef matrix<static_matrix_storage<M&, MT>> ref;
-
+    typedef typename std::remove_reference<M>::type storage_type;
+    typedef matrix<static_matrix_storage<storage_type, MT>> matrix_type;
+    typedef matrix<static_matrix_storage<storage_type&, MT>> ref;
 
     static_matrix_storage() = default;
 
@@ -231,8 +237,9 @@ public:
         Cols = 0
     };
 
-    typedef matrix<flat_dynamic_storage<M, L>> matrix_type;
-    typedef matrix<flat_dynamic_storage<M&, L>> ref;
+    typedef typename std::remove_reference<M>::type storage_type;
+    typedef matrix<flat_dynamic_storage<storage_type, L>> matrix_type;
+    typedef matrix<flat_dynamic_storage<storage_type&, L>> ref;
 
     flat_dynamic_storage() : _r(0), _c(0) {}
 

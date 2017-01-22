@@ -140,7 +140,7 @@ TEST_CASE("product", "[matrix]") {
 TEST_CASE("transpose", "[matrix]") {
 
     array_matrix<float, 2, 3> m1 = {1,2,3,4,5,6};
-    array_matrix<float, 3, 2> a = m1.transpose();
+    array_matrix<float, 3, 2> a = m1.compute_transposed();
 
     // 1 2 3
     // 4 5 6
@@ -150,6 +150,37 @@ TEST_CASE("transpose", "[matrix]") {
     // 3 6
     array_matrix<float, 3, 2> e = {1,4,2,5,3,6};
     REQUIRE(a == e);
+
+    array_matrix<float, 3, 3> m2 = {1,2,3,4,5,6,7,8,9};
+    m2.transpose();
+
+    // 1 2 3
+    // 4 5 6
+    // 7 8 9
+
+    // 1 4 7
+    // 2 5 8
+    // 3 6 9
+    array_matrix<float, 3, 3> e2 = {1,4,7,2,5,8,3,6,9};
+    REQUIRE(m2 == e2);
+
+}
+
+TEST_CASE("flat_array_matrix::ref", "[matrix]") {
+
+    float x[] = {1,2,3,4,5,6,7,8,9};
+    typename flat_array_matrix<float, 3, 3>::ref m(x);
+
+    float v[] = {3,2,1,3,2,1,3,2,1};
+    m.assign<float[9],array_matrix_traits<float,3,3>>(v);
+
+    REQUIRE( std::equal(x, x + 9, v, v + 9) );
+
+    m.transpose();
+
+    float e[] = {3,3,3,2,2,2,1,1,1};
+    REQUIRE( std::equal(x, x + 9, e, e + 9) );
+
 }
 
 TEST_CASE("container_matrix", "[matrix]") {
