@@ -25,25 +25,25 @@ void swap_col(M& m, size_t c1, size_t c2) {
     }
 }
 
-template <typename M, typename N, size_t R, size_t C, bool Enable = false>
+template <typename M, typename N, size_t R, size_t C, typename Enable = void>
 struct matrix_with_size {
     typedef N matrix_type;
 };
 
 template <typename M, typename N, size_t R, size_t C>
-struct matrix_with_size<M, N, R, C, true> {
+struct matrix_with_size<M, N, R, C, typename std::enable_if<R != 0 && C != 0>::type> {
     typedef typename M::template with_size<R, C>::matrix_type matrix_type;
 };
 
 template <typename M>
 struct matrix_transpose {
-    typedef typename matrix_with_size<M, M, M::Cols, M::Rows, M::Rows != 0>::matrix_type matrix_type;
+    typedef typename matrix_with_size<M, M, M::Cols, M::Rows>::matrix_type matrix_type;
 };
 
 template <typename M, typename N, typename T = matrix_traits<N>>
 struct matrix_product {
     typedef typename std::conditional<M::Rows != 0,
-        typename matrix_with_size<M, N, M::Rows, T::Cols, M::Rows != 0 && T::Rows != 0>::matrix_type,
+        typename matrix_with_size<M, N, M::Rows, T::Cols>::matrix_type,
         M>::type matrix_type;
 };
 

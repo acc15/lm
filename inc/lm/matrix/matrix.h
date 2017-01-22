@@ -164,6 +164,12 @@ public:
     typedef matrix<static_matrix_storage<storage_type, MT>> matrix_type;
     typedef matrix<static_matrix_storage<storage_type&, MT>> ref;
 
+    template <size_t Rows, size_t Cols>
+    struct with_size {
+        typedef typename MT::template with_size<Rows, Cols>::traits traits;
+        typedef typename static_matrix_storage<typename traits::matrix_type, traits>::matrix_type matrix_type;
+    };
+
     static_matrix_storage() = default;
 
     // initializer constructor
@@ -188,12 +194,6 @@ public:
     template <typename T = M, typename = typename std::enable_if<std::is_reference<M>::value && std::is_same<T, M>::value>::type>
     static_matrix_storage(M m) : _m(m) {
     }
-
-    template <size_t Rows, size_t Cols>
-    struct with_size {
-        typedef typename MT::template with_size<Rows, Cols>::traits traits;
-        typedef typename static_matrix_storage<typename traits::matrix_type, traits>::matrix_type matrix_type;
-    };
 
     size_t rows() const {
         return MT::rows(_m);
@@ -297,17 +297,33 @@ private:
 
 };
 
-template <typename M>
-class transposed_storage {
-public:
-    typedef typename M::value_type value_type;
 
+template <template <class> class D, typename M>
+struct matrix_decorator {
     enum {
         Rows = M::Rows,
         Cols = M::Cols
     };
 
-    typedef matrix<transposed_storage<M>> matrix_type;
+    typedef typename std::remove_reference<M>::type wrapped_type;
+    typedef matrix<D<wrapped_type>> matrix_type;
+    typedef matrix<D<wrapped_type&>> ref;
+    typedef typename wrapped_type::value_type value_type;
+
+    template <size_t R, size_t C>
+    struct with_size {
+        typedef typename D<
+            typename matrix_with_size<wrapped_type, wrapped_type, R, C>::matrix_type
+        >::matrix_type matrix_type;
+    };
+
+};
+
+template <typename M>
+class transposed_storage: public matrix_decorator<transposed_storage, M> {
+public:
+    typedef matrix_decorator<transposed_storage, M> base_type;
+    typedef typename base_type::value_type value_type;
 
     transposed_storage(M& ref) : _m(ref) {
     }
@@ -336,17 +352,12 @@ private:
 
 };
 
+
 template <typename M>
-class permutation_storage {
+class permutation_storage: public matrix_decorator<permutation_storage, M> {
 public:
-    typedef typename M::value_type value_type;
-
-    enum {
-        Rows = M::Rows,
-        Cols = M::Cols
-    };
-
-    typedef matrix<permutation_storage<M>> matrix_type;
+    typedef matrix_decorator<permutation_storage, M> base_type;
+    typedef typename base_type::value_type value_type;
 
     permutation_storage(M& ref) : _m(ref) {
         reset();
@@ -392,10 +403,10 @@ public:
 
 private:
     struct static_vec {
-        typedef size_t type[Rows];
+        typedef size_t type[M::Rows];
 
         static void resize(type& t, size_t s) {
-            if (s != Rows) {
+            if (s != M::Rows) {
                 throw std::length_error("static vec can't be resized");
             }
         }
@@ -409,7 +420,7 @@ private:
         }
     };
 
-    typedef typename std::conditional<Rows != 0, static_vec, dynamic_vec>::type vec_traits;
+    typedef typename std::conditional<M::Rows != 0, static_vec, dynamic_vec>::type vec_traits;
 
     void resize_p(size_t sz) {
         vec_traits::resize(_p, sz);

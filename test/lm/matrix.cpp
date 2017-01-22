@@ -218,7 +218,7 @@ TEST_CASE("lu_decomposition", "[matrix]") {
     float expected_det[] = { -27.f, 204.f, 54.f };
     for (size_t i = 0; i < sizeof(expected_det) / sizeof(float); i++) {
 
-        vector_matrix<float> m(test_matricies[i]);
+        array_matrix<float, 3, 3> m(test_matricies[i]);
         permutation_matrix<decltype(m)> pm(m);
 
         REQUIRE( lu_decomposition(pm) );
