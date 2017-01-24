@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <algorithm>
 
-#include <lm/matrix/static.h>
+#include <lm/matrix/type_util.h>
 #include <lm/matrix/traits.h>
 
 namespace lm {
