@@ -8,6 +8,7 @@ namespace lm {
 template <typename T, typename Enable = void>
 struct matrix_traits {
 
+    typedef T container_type;
     typedef typename T::value_type value_type;
 
     enum {
@@ -15,19 +16,19 @@ struct matrix_traits {
         Cols = T::Cols
     };
 
-    static size_t rows(const T& m) {
+    static size_t rows(const container_type& m) {
         return m.rows();
     }
 
-    static size_t cols(const T& m) {
+    static size_t cols(const container_type& m) {
         return m.cols();
     }
 
-    static const value_type& cell(const T& m, size_t row, size_t col) {
+    static const value_type& cell(const container_type& m, size_t row, size_t col) {
         return m.cell(row, col);
     }
 
-    static value_type& cell(T& m, size_t row, size_t col) {
+    static value_type& cell(container_type& m, size_t row, size_t col) {
         return m.cell(row, col);
     }
 
@@ -38,12 +39,12 @@ struct matrix_traits<T, typename std::enable_if<
         std::is_array<typename std::remove_reference<T>::type>::value &&
         std::rank<typename std::remove_reference<T>::type>::value == 2>::type> {
 
-    typedef typename std::remove_reference<T>::type matrix_type;
-    typedef typename std::remove_all_extents< matrix_type >::type value_type;
+    typedef typename std::remove_reference<T>::type container_type;
+    typedef typename std::remove_all_extents< container_type >::type value_type;
 
     enum {
-        Rows = std::extent<matrix_type, 0>::value,
-        Cols = std::extent<matrix_type, 1>::value
+        Rows = std::extent<container_type, 0>::value,
+        Cols = std::extent<container_type, 1>::value
     };
 
     template <size_t Rows, size_t Cols>
@@ -51,19 +52,19 @@ struct matrix_traits<T, typename std::enable_if<
         typedef matrix_traits<value_type[Rows][Cols]> traits;
     };
 
-    static const value_type& cell(const matrix_type& m, size_t row, size_t col) {
+    static const value_type& cell(const container_type& m, size_t row, size_t col) {
         return m[row][col];
     }
 
-    static value_type& cell(matrix_type& m, size_t row, size_t col) {
+    static value_type& cell(container_type& m, size_t row, size_t col) {
         return m[row][col];
     }
 
-    static size_t rows(const matrix_type& m) {
+    static size_t rows(const container_type& m) {
         return Rows;
     }
 
-    static size_t cols(const matrix_type& m) {
+    static size_t cols(const container_type& m) {
         return Cols;
     }
 
@@ -72,18 +73,18 @@ struct matrix_traits<T, typename std::enable_if<
 template <typename T>
 struct matrix_traits<std::initializer_list<std::initializer_list<T>>> {
 
-    typedef std::initializer_list<std::initializer_list<T>> matrix_type;
+    typedef std::initializer_list<std::initializer_list<T>> container_type;
     typedef T value_type;
 
-    static const value_type& cell(const matrix_type& m, size_t row, size_t col) {
+    static const value_type& cell(const container_type& m, size_t row, size_t col) {
         return *((m.begin() + row)->begin() + col);
     }
 
-    static size_t rows(const matrix_type& m) {
+    static size_t rows(const container_type& m) {
         return m.size();
     }
 
-    static size_t cols(const matrix_type& m) {
+    static size_t cols(const container_type& m) {
         return m.begin()->size();
     }
 
@@ -94,26 +95,26 @@ template <typename V, size_t R, size_t C, typename Layout = row_major_layout>
 struct range_matrix_traits {
 
     typedef typename V::value_type value_type;
-    typedef V matrix_type;
+    typedef V container_type;
 
     enum {
         Rows = R,
         Cols = C
     };
 
-    static const value_type& cell(matrix_type& m, size_t row, size_t col) {
+    static const value_type& cell(container_type& m, size_t row, size_t col) {
         return *(m.begin() + Layout::compute_flat_index(row, col, R, C));
     }
 
-    static const value_type& cell(const matrix_type& m, size_t row, size_t col) {
+    static const value_type& cell(const container_type& m, size_t row, size_t col) {
         return *(m.begin() + Layout::compute_flat_index(row, col, R, C));
     }
 
-    static size_t rows(const matrix_type& m) {
+    static size_t rows(const container_type& m) {
         return Rows;
     }
 
-    static size_t cols(const matrix_type& m) {
+    static size_t cols(const container_type& m) {
         return Cols;
     }
 
@@ -122,7 +123,7 @@ struct range_matrix_traits {
 template <typename T, typename V, size_t R, size_t C, typename L>
 struct flat_matrix_traits {
 
-    typedef T matrix_type;
+    typedef T container_type;
     typedef V value_type;
 
     enum {
@@ -130,19 +131,19 @@ struct flat_matrix_traits {
         Cols = C
     };
 
-    static const value_type& cell(const matrix_type& m, size_t row, size_t col) {
+    static const value_type& cell(const container_type& m, size_t row, size_t col) {
         return m[L::compute_flat_index(row, col, R, C)];
     }
 
-    static value_type& cell(matrix_type& m, size_t row, size_t col) {
+    static value_type& cell(container_type& m, size_t row, size_t col) {
         return m[L::compute_flat_index(row, col, R, C)];
     }
 
-    static size_t rows(const matrix_type& m) {
+    static size_t rows(const container_type& m) {
         return Rows;
     }
 
-    static size_t cols(const matrix_type& m) {
+    static size_t cols(const container_type& m) {
         return Cols;
     }
 };

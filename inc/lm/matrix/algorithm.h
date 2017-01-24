@@ -27,27 +27,27 @@ void swap_col(M& m, size_t c1, size_t c2) {
 
 template <typename M, typename N, size_t R, size_t C, typename Enable = void>
 struct matrix_with_size {
-    typedef N matrix_type;
+    typedef N value_matrix_type;
 };
 
 template <typename M, typename N, size_t R, size_t C>
 struct matrix_with_size<M, N, R, C, typename std::enable_if<R != 0 && C != 0>::type> {
-    typedef typename M::template with_size<R, C>::matrix_type matrix_type;
+    typedef typename M::template with_size<R, C>::value_matrix_type value_matrix_type;
 };
 
 template <typename M>
 struct matrix_transpose {
-    typedef typename matrix_with_size<M, M, M::Cols, M::Rows>::matrix_type matrix_type;
+    typedef typename matrix_with_size<M, M, M::Cols, M::Rows>::value_matrix_type value_matrix_type;
 };
 
 template <typename M, typename N, typename T = matrix_traits<N>>
 struct matrix_product {
     typedef typename std::conditional<M::Rows != 0,
-        typename matrix_with_size<M, N, M::Rows, T::Cols>::matrix_type,
-        M>::type matrix_type;
+        typename matrix_with_size<M, N, M::Rows, T::Cols>::value_matrix_type,
+        M>::type value_matrix_type;
 };
 
-template <typename M, typename P = typename matrix_transpose<M>::matrix_type>
+template <typename M, typename P = typename matrix_transpose<M>::value_matrix_type>
 void transpose(const M& m, P& result) {
     result.resize(m.cols(), m.rows());
     for (size_t i = 0; i < result.rows(); i++) {
@@ -57,14 +57,14 @@ void transpose(const M& m, P& result) {
     }
 }
 
-template <typename M, typename P = typename matrix_transpose<M>::matrix_type>
+template <typename M, typename P = typename matrix_transpose<M>::value_matrix_type>
 P transpose(const M& m) {
     P result;
     transpose<M, P>(m, result);
     return result;
 }
 
-template <typename M, typename N, typename T = matrix_traits<N>, typename P = typename matrix_product<M, N, T>::matrix_type>
+template <typename M, typename N, typename T = matrix_traits<N>, typename P = typename matrix_product<M, N, T>::value_matrix_type>
 void product(const M& m, const N& n, P& result) {
     result.resize(m.rows(), T::cols(n));
     for (size_t i = 0; i < result.rows(); i++) {
@@ -78,7 +78,7 @@ void product(const M& m, const N& n, P& result) {
     }
 }
 
-template <typename M, typename N, typename T = matrix_traits<N>, typename P = typename matrix_product<M, N, T>::matrix_type>
+template <typename M, typename N, typename T = matrix_traits<N>, typename P = typename matrix_product<M, N, T>::value_matrix_type>
 P product(const M& m, const N& n) {
     P result;
     lm::product<M, N, T, P>(m, n, result);

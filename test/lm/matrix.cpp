@@ -137,6 +137,31 @@ TEST_CASE("product", "[matrix]") {
 
 }
 
+TEST_CASE("product_ref", "[matrix]") {
+
+    float m[3][3] = {{1,2,3},{4,5,6},{7,8,9}};
+
+    array_matrix<float, 3, 3>::reference_matrix_type p1(m);
+    array_matrix<float, 3, 3> p2 = {1,2,3,4,5,6,7,8,9};
+    p1 *= p2;
+
+    array_matrix<float, 3, 3> p3 = {30,36,42,66,81,96,102,126,150};
+    REQUIRE( p1 == p3);
+
+}
+
+
+TEST_CASE("product_this", "[matrix]") {
+
+    array_matrix<float, 3, 3> p1 = {1,2,3,4,5,6,7,8,9};
+    array_matrix<float, 3, 3> p2 = {1,2,3,4,5,6,7,8,9};
+    p1 *= p2;
+
+    array_matrix<float, 3, 3> p3 = {30,36,42,66,81,96,102,126,150};
+    REQUIRE( p1 == p3);
+
+}
+
 TEST_CASE("transpose", "[matrix]") {
 
     array_matrix<float, 2, 3> m1 = {1,2,3,4,5,6};
@@ -166,10 +191,23 @@ TEST_CASE("transpose", "[matrix]") {
 
 }
 
+TEST_CASE("dynamic_transpose", "[matrix]") {
+
+    vector_matrix<float> m = {{1,2,3},{4,5,6}};
+    m.transpose();
+
+    REQUIRE(m.rows() == 3);
+    REQUIRE(m.cols() == 2);
+
+    array_matrix<float, 3, 2> e = {1,4,2,5,3,6};
+    REQUIRE(m == e);
+
+}
+
 TEST_CASE("flat_array_matrix::ref", "[matrix]") {
 
     float x[] = {1,2,3,4,5,6,7,8,9};
-    typename flat_array_matrix<float, 3, 3>::ref m(x);
+    typename flat_array_matrix<float, 3, 3>::reference_matrix_type m(x);
 
     float v[] = {3,2,1,3,2,1,3,2,1};
     m.assign<float[9],array_matrix_traits<float,3,3>>(v);
@@ -187,13 +225,30 @@ TEST_CASE("container_matrix", "[matrix]") {
 
     std::array<float, 9> x;
 
-    typename container_matrix<std::array, float, 3, 3>::ref m(x);
+    typename container_matrix<std::array, float, 3, 3>::reference_matrix_type m(x);
     m.assign<std::initializer_list<float>, range_matrix_traits<std::initializer_list<float>, 3, 3>>({ 1, 2, 3, 4, 5, 6, 7, 8, 9});
 
     for (size_t i = 0; i < x.size(); i++) {
         REQUIRE(x[i] == i + 1);
     }
 }
+
+TEST_CASE("permutation_matrix", "[matrix]") {
+
+    permutation_matrix< vector_matrix<float> > m = {{1,2,3},{4,5,6},{7,8,9}};
+
+
+
+
+}
+
+//TEST_CASE("permutation_matrix.resize", "[matrix]") {
+
+//    permutation_matrix< vector_matrix<float> > m = {{1,2,3},{4,5,6},{7,8,9}};
+//    m.resize(4, 4);
+
+//}
+
 
 TEST_CASE("lu_decomposition", "[matrix]") {
 
@@ -219,7 +274,7 @@ TEST_CASE("lu_decomposition", "[matrix]") {
     for (size_t i = 0; i < sizeof(expected_det) / sizeof(float); i++) {
 
         array_matrix<float, 3, 3> m(test_matricies[i]);
-        permutation_matrix<decltype(m)> pm(m);
+        permutation_matrix<decltype(m)>::reference_matrix_type pm(m);
 
         REQUIRE( lu_decomposition(pm) );
 
