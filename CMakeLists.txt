@@ -13,6 +13,7 @@ set(SOURCE_FILES
     inc/lm/matrix/layout.h
     inc/lm/matrix/traits.h
     inc/lm/matrix/matrix.h
+    inc/lm/matrix/static.h
     )
 
 add_executable(lm_test

@@ -1,6 +1,9 @@
 #pragma once
 
 #include <cstddef>
+#include <algorithm>
+
+#include <lm/matrix/static.h>
 #include <lm/matrix/traits.h>
 
 namespace lm {
@@ -25,28 +28,6 @@ void swap_col(M& m, size_t c1, size_t c2) {
     }
 }
 
-template <typename M, typename N, size_t R, size_t C, typename Enable = void>
-struct matrix_with_size {
-    typedef N value_matrix_type;
-};
-
-template <typename M, typename N, size_t R, size_t C>
-struct matrix_with_size<M, N, R, C, typename std::enable_if<R != 0 && C != 0>::type> {
-    typedef typename M::template with_size<R, C>::value_matrix_type value_matrix_type;
-};
-
-template <typename M>
-struct matrix_transpose {
-    typedef typename matrix_with_size<M, M, M::Cols, M::Rows>::value_matrix_type value_matrix_type;
-};
-
-template <typename M, typename N, typename T = matrix_traits<N>>
-struct matrix_product {
-    typedef typename std::conditional<M::Rows != 0,
-        typename matrix_with_size<M, N, M::Rows, T::Cols>::value_matrix_type,
-        M>::type value_matrix_type;
-};
-
 template <typename M, typename P = typename matrix_transpose<M>::value_matrix_type>
 void transpose(const M& m, P& result) {
     result.resize(m.cols(), m.rows());
@@ -66,7 +47,7 @@ P transpose(const M& m) {
 
 template <typename M, typename N, typename T = matrix_traits<N>, typename P = typename matrix_product<M, N, T>::value_matrix_type>
 void product(const M& m, const N& n, P& result) {
-    result.resize(m.rows(), T::cols(n));
+    result.resize(std::min(m.rows(), T::rows(n)), std::min(T::cols(n), m.cols()));
     for (size_t i = 0; i < result.rows(); i++) {
         for (size_t j = 0; j < result.cols(); j++) {
             typename M::value_type sum = 0;
