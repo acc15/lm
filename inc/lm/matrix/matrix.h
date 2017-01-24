@@ -167,6 +167,24 @@ public:
         return !equal<T, Traits>(other);
     }
 
+
+    // TODO
+//    value_type determinant() const {
+//        permutation_matrix<matrix_type> pm(*this);
+//        if (!lu_decomposition(pm)) {
+//            return 0;
+//        }
+
+//        value_type det = 1;
+//        for (size_t i = 0; i < std::min(S::rows(), S::cols()); i++) {
+//            det *= pm.cell(i, i);
+//        }
+//        if ((pm.permutation_count() & 1) != 0) {
+//            det = -det;
+//        }
+//        return det;
+//    }
+
 };
 
 template <typename M, typename MT = matrix_traits<M>>
