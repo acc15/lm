@@ -198,15 +198,16 @@ public:
     }
 
     // initializer constructor
-    template <typename T, typename Traits = range_matrix_traits<std::initializer_list<T>, Rows, Cols, row_major_layout>>
+    template <typename T>
     static_matrix_storage(const std::initializer_list<T>& m) {
-        static_cast<value_matrix_type*>(this)->template assign<const std::initializer_list<T>, Traits>(m);
+        static_cast<value_matrix_type*>(this)->template assign<const std::initializer_list<T>,
+                range_matrix_traits<std::initializer_list<T>, Rows, Cols, row_major_layout>>(m);
     }
 
     // copy constructor
-    template <typename T, typename Traits = matrix_traits<T>>
+    template <typename T>
     static_matrix_storage(const T& other) {
-        static_cast<value_matrix_type*>(this)->template assign<T, Traits>(other);
+        static_cast<value_matrix_type*>(this)->assign(other);
     }
 
     // reference constructor
@@ -267,9 +268,9 @@ public:
     }
 
     // copy constructor
-    template <typename T, typename Traits = matrix_traits<T>>
+    template <typename T>
     flat_dynamic_storage(const T& other) {
-        static_cast<value_matrix_type*>(this)->template assign<T, Traits>(other);
+        static_cast<value_matrix_type*>(this)->assign(other);
     }
 
     flat_dynamic_storage(size_t r, size_t c) {
@@ -343,8 +344,14 @@ public:
     typedef matrix_decorator<transposed_storage, M> base_type;
     typedef typename base_type::value_type value_type;
 
-    transposed_storage(M& ref) : _m(ref) {
-    }
+    transposed_storage() = default;
+
+    template <typename T> transposed_storage(const std::initializer_list<T>& other) : _m(other) {}
+    template <typename T> transposed_storage(const std::initializer_list<std::initializer_list<T>>& other) : _m(other) {}
+    template <typename T> transposed_storage(const T& other) : _m(other) {}
+
+    template <typename T = M, typename = typename std::enable_if<std::is_reference<T>::value && std::is_same<T, M>::value>::type>
+    transposed_storage(M ref) : _m(ref) {}
 
     size_t rows() { return _m.cols(); }
     size_t cols() { return _m.rows(); }
@@ -366,7 +373,7 @@ public:
     }
 
 private:
-    M& _m;
+    M _m;
 
 };
 
@@ -383,16 +390,13 @@ public:
     permutation_storage(const std::initializer_list<std::initializer_list<T>>& other) : _m(other) {
     }
 
-    template <typename T>
-    permutation_storage(const std::initializer_list<T>& other) : _m(other) {
+    template <typename T> permutation_storage(const std::initializer_list<T>& other) : _m(other) {
     }
 
-    template <typename T>
-    permutation_storage(const T& other) : _m(other) {
-    }
+    template <typename T> permutation_storage(const T& other) : _m(other) {}
 
     template <typename T = M, typename = typename std::enable_if<std::is_reference<T>::value && std::is_same<T, M>::value>::type>
-    permutation_storage(M& ref) : _m(ref) {
+    permutation_storage(M ref) : _m(ref) {
         reset();
     }
 
