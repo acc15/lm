@@ -46,24 +46,24 @@ P transpose(const M& m) {
     return result;
 }
 
-template <typename M, typename N, typename T = matrix_traits<N>, typename P = typename matrix_product<M, N, T>::value_matrix_type>
+template <typename M, typename N, typename P = typename matrix_product<M, N>::value_matrix_type>
 void product(const M& m, const N& n, P& result) {
-    result.resize(std::min(m.rows(), T::rows(n)), std::min(T::cols(n), m.cols()));
+    result.resize(std::min(m.rows(), n.rows()), std::min(n.cols(), m.cols()));
     for (size_t i = 0; i < result.rows(); i++) {
         for (size_t j = 0; j < result.cols(); j++) {
             typename M::value_type sum = 0;
             for (size_t k = 0; k < m.cols(); k++) {
-                sum += m(i, k) * T::cell(n, k, j);
+                sum += m(i, k) * n(k, j);
             }
             result(i, j) = sum;
         }
     }
 }
 
-template <typename M, typename N, typename T = matrix_traits<N>, typename P = typename matrix_product<M, N, T>::value_matrix_type>
+template <typename M, typename N, typename P = typename matrix_product<M, N>::value_matrix_type>
 P product(const M& m, const N& n) {
     P result;
-    lm::product<M, N, T, P>(m, n, result);
+    lm::product<M, N, P>(m, n, result);
     return result;
 }
 

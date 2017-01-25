@@ -31,12 +31,12 @@ struct matrix_transpose {
     typedef typename matrix_with_size<M, M, M::Cols, M::Rows>::value_matrix_type value_matrix_type;
 };
 
-template <typename M, typename N, typename T = matrix_traits<N>>
+template <typename M, typename N>
 struct matrix_product {
     typedef typename std::conditional<M::Rows != 0,
         typename matrix_with_size<M, N,
-            u_min<M::Rows, T::Rows>::value,
-            u_min<T::Cols, M::Cols>::value>::value_matrix_type,
+            u_min<M::Rows, N::Rows>::value,
+            u_min<N::Cols, M::Cols>::value>::value_matrix_type,
         M>::type value_matrix_type;
 };
 

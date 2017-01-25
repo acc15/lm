@@ -61,24 +61,24 @@ public:
         return *this;
     }
 
-    template <typename T, typename Traits = matrix_traits<T>>
+    template <typename T>
     matrix_type& add(const T& other) {
-        return apply<std::plus<void>, T, Traits>(other, std::plus<void>());
+        return apply<std::plus<void>, T>(other, std::plus<void>());
     }
 
-    template <typename T, typename Traits = matrix_traits<T>>
+    template <typename T>
     matrix_type& subtract(const T& other) {
-        return apply<std::minus<void>, T, Traits>(other, std::minus<void>());
+        return apply<std::minus<void>, T>(other, std::minus<void>());
     }
 
-    template <typename T, typename Traits = matrix_traits<T>>
+    template <typename T>
     bool equal(const T& other) {
-        if (S::rows() != Traits::rows(other) || S::cols() != Traits::cols(other)) {
+        if (S::rows() != other.rows() || S::cols() != other.cols()) {
             return false;
         }
         for (size_t i = 0; i < S::rows(); i++) {
             for (size_t j = 0; j < S::cols(); j++) {
-                if (cell(i, j) != Traits::cell(other, i, j)) {
+                if (cell(i, j) != other(i, j)) {
                     return false;
                 }
             }
@@ -86,22 +86,22 @@ public:
         return true;
     }
 
-    template <typename T, typename Traits = matrix_traits<T>, typename P = typename matrix_product<value_matrix_type, T, Traits>::value_matrix_type>
+    template <typename T, typename P = typename matrix_product<value_matrix_type, T>::value_matrix_type>
     void compute_product(const T& other, P& p) const {
-        lm::product<matrix_type, T, Traits, P>(*this, other, p);
+        lm::product<matrix_type, T, P>(*this, other, p);
     }
 
-    template <typename T, typename Traits = matrix_traits<T>, typename P = typename matrix_product<value_matrix_type, T, Traits>::value_matrix_type>
+    template <typename T, typename P = typename matrix_product<value_matrix_type, T>::value_matrix_type>
     P compute_product(const T& other) const {
-        return lm::product<matrix_type, T, Traits, P>(*this, other);
+        return lm::product<matrix_type, T, P>(*this, other);
     }
 
-    template <typename T, typename Traits = matrix_traits<T>,
+    template <typename T,
               typename P = typename matrix_product<matrix_type, T>::value_matrix_type,
               typename = typename std::enable_if<std::is_same<value_matrix_type, P>::value>::type>
     matrix_type& product(const T& other) {
         P p;
-        compute_product<T, Traits, P>(other, p);
+        compute_product<T, P>(other, p);
         return assign(p);
     }
 
@@ -125,50 +125,49 @@ public:
 
     template <typename T, typename Traits = matrix_traits<T>>
     matrix_type& operator=(const T& other) {
-        return assign<T, Traits>(other);
+        return assign<T>(other);
     }
 
-    template <typename T, typename Traits = matrix_traits<T>>
+    template <typename T>
     matrix_type& operator+=(const T& other) {
-        return add<T, Traits>(other);
+        return add<T>(other);
     }
 
-    template <typename T, typename Traits = matrix_traits<T>>
+    template <typename T>
     matrix_type& operator-=(const T& other) {
-        return subtract<T, Traits>(other);
+        return subtract<T>(other);
     }
 
-    template <typename T, typename Traits = matrix_traits<T>>
+    template <typename T>
     value_matrix_type operator+(const T& other) {
-        return value_matrix_type(*this) += other;
+        return value_matrix_type(*this).add<T>(other);
     }
 
-    template <typename T, typename Traits = matrix_traits<T>>
+    template <typename T>
     value_matrix_type operator-(const T& other) {
-        return value_matrix_type(*this) -= other;
+        return value_matrix_type(*this).subtract<T>(other);
     }
 
-    template <typename T, typename Traits = matrix_traits<T>, typename P = typename matrix_product<value_matrix_type, T, Traits>::matrix_type>
+    template <typename T, typename P = typename matrix_product<value_matrix_type, T>::matrix_type>
     P operator*(const T& other) {
-        return compute_product<T, Traits, P>(other);
+        return compute_product<T, P>(other);
     }
 
     template <typename T,
-              typename Traits = matrix_traits<T>,
-              typename P = typename matrix_product<value_matrix_type, T, Traits>::value_matrix_type,
+              typename P = typename matrix_product<value_matrix_type, T>::value_matrix_type,
               typename = typename std::enable_if<std::is_same<value_matrix_type, P>::value>::type>
     matrix_type& operator*=(const T& other) {
-        return product<T, Traits, P>(other);
+        return product<T, P>(other);
     }
 
-    template <typename T, typename Traits = matrix_traits<T>>
+    template <typename T>
     bool operator==(const T& other) {
-        return equal<T, Traits>(other);
+        return equal<T>(other);
     }
 
-    template <typename T, typename Traits = matrix_traits<T>>
+    template <typename T>
     bool operator!=(const T& other) {
-        return !equal<T, Traits>(other);
+        return !equal<T>(other);
     }
 
     value_type determinant() const {
