@@ -121,6 +121,49 @@ bool lu_decomposition(M& m) {
 }
 
 template <typename M>
+void make_identity(M& m) {
+    for (size_t i = 0; i < m.rows(); i++) {
+        for (size_t j = 0; j < m.cols(); j++) {
+            m(i, j) = static_cast<typename M::value_type>(i == j ? 1 : 0);
+        }
+    }
+}
+
+template <typename M, typename R>
+bool invert_matrix(const M& m, R& r) {
+    permutation_matrix<M> lu(m);
+    if (!lu_decomposition(lu)) {
+        return false;
+    }
+
+    // TODO permutate cols using permutation vector from lu
+    // typename permutation_matrix<M>::reference_matrix_type pr(r);
+    // pr.permutations(lu.permutations());
+    // make_identity(pr);
+    //lu_substitute(lu, pr);
+    return true;
+
+}
+
+template <typename M, typename R>
+void lu_substitute(const M& lu, R& r) {
+    typedef typename M::value_type value_type;
+    for (size_t j = 0; j < lu.cols(); j++) {
+        for (size_t i = 1; i < lu.rows();i++) {
+            for (size_t k = 0; k < i; k++) {
+                r(i, j) -= lu(i, k) * r(k, j);
+            }
+        }
+        for (size_t i = lu.rows() - 1; i != static_cast<size_t>(-1); i--) {
+            for (size_t k = lu.cols() - 1; k > i; k--) {
+                r(i, j) -= lu(i, k) * r(k, j);
+            }
+            r(i, j) /= lu(i, i);
+        }
+    }
+}
+
+template <typename M>
 typename M::value_type lu_determinant(const M& lu, size_t permutation_count) {
     typename M::value_type det = static_cast<typename M::value_type>((permutation_count & 1) == 0 ? 1 : -1);
     for (size_t i = 0; i < std::min(lu.rows(), lu.cols()); i++) {

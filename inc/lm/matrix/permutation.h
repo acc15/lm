@@ -3,6 +3,8 @@
 #include <cstddef>
 #include <cassert>
 
+#include <numeric>
+
 #include <lm/matrix/decorator.h>
 
 namespace lm {
@@ -66,9 +68,7 @@ public:
     void reset() {
         _c = 0;
         resize_p(rows());
-        for (size_t i = 0; i < rows(); i++) {
-            _p[i] = i;
-        }
+        std::iota(std::begin(_p), std::end(_p), 0);
     }
 
     size_t permutation_count() const {
