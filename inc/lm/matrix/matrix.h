@@ -10,6 +10,11 @@
 #include <lm/matrix/layout.h>
 #include <lm/matrix/traits.h>
 
+#include <lm/matrix/static.h>
+#include <lm/matrix/dynamic.h>
+#include <lm/matrix/transpose.h>
+#include <lm/matrix/permutation.h>
+
 namespace lm {
 
 template <typename S>

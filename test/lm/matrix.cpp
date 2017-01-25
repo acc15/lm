@@ -2,12 +2,7 @@
 
 #include <vector>
 
-#include <lm/matrix/static.h>
-#include <lm/matrix/dynamic.h>
-#include <lm/matrix/permutation.h>
-#include <lm/matrix/transpose.h>
 #include <lm/matrix/matrix.h>
-
 #include <lm/vec.h>
 
 
