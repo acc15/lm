@@ -9,9 +9,15 @@ set(SOURCE_FILES
     inc/lm/algorithm.h
     inc/lm/generic_vec.h
     inc/lm/vec.h
-    inc/lm/matrix/algorithm.h
     inc/lm/matrix/layout.h
     inc/lm/matrix/traits.h
+    inc/lm/matrix/fwd.h
+    inc/lm/matrix/decorator.h
+    inc/lm/matrix/permutation.h
+    inc/lm/matrix/transpose.h
+    inc/lm/matrix/static.h
+    inc/lm/matrix/dynamic.h
+    inc/lm/matrix/algorithm.h
     inc/lm/matrix/matrix.h
     inc/lm/matrix/type_util.h
     )

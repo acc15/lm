@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+
 namespace lm {
 
 struct col_major_layout {

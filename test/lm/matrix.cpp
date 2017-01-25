@@ -1,9 +1,15 @@
 #include <catch.hpp>
+
+#include <vector>
+
+#include <lm/matrix/static.h>
+#include <lm/matrix/dynamic.h>
+#include <lm/matrix/permutation.h>
+#include <lm/matrix/transpose.h>
 #include <lm/matrix/matrix.h>
 
 #include <lm/vec.h>
 
-#include <vector>
 
 using namespace lm;
 
@@ -233,24 +239,7 @@ TEST_CASE("container_matrix", "[matrix]") {
     }
 }
 
-TEST_CASE("permutation_matrix", "[matrix]") {
-
-    permutation_matrix< vector_matrix<float> > m = {{1,2,3},{4,5,6},{7,8,9}};
-
-
-
-
-}
-
-//TEST_CASE("permutation_matrix.resize", "[matrix]") {
-
-//    permutation_matrix< vector_matrix<float> > m = {{1,2,3},{4,5,6},{7,8,9}};
-//    m.resize(4, 4);
-
-//}
-
-
-TEST_CASE("lu_decomposition", "[matrix]") {
+TEST_CASE("determinant", "[matrix]") {
 
     float test_matricies[][3][3] = {
         {
@@ -272,18 +261,10 @@ TEST_CASE("lu_decomposition", "[matrix]") {
 
     float expected_det[] = { -27.f, 204.f, 54.f };
     for (size_t i = 0; i < sizeof(expected_det) / sizeof(float); i++) {
-
         array_matrix<float, 3, 3> m(test_matricies[i]);
-        permutation_matrix<decltype(m)>::reference_matrix_type pm(m);
-
-        REQUIRE( lu_decomposition(pm) );
-
-        float det = pm.cell(0, 0) * pm.cell(1, 1) * pm.cell(2, 2);
-        if ((pm.permutation_count() & 1) != 0) {
-            det = -det;
-        }
-
+        float det = determinant(m);
         REQUIRE( det == expected_det[i] );
     }
 
 }
+

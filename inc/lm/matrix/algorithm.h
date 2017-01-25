@@ -5,6 +5,7 @@
 
 #include <lm/matrix/type_util.h>
 #include <lm/matrix/traits.h>
+#include <lm/matrix/permutation.h>
 
 namespace lm {
 
@@ -118,5 +119,24 @@ bool lu_decomposition(M& m) {
     }
     return true;
 }
+
+template <typename M>
+typename M::value_type lu_determinant(const M& lu, size_t permutation_count) {
+    typename M::value_type det = (permutation_count & 1) == 0 ? 1 : -1;
+    for (size_t i = 0; i < std::min(lu.rows(), lu.cols()); i++) {
+        det *= lu(i, i);
+    }
+    return det;
+}
+
+template <typename M>
+typename M::value_type determinant(const M& m) {
+    permutation_matrix<M> lu(m);
+    if (!lu_decomposition(lu)) {
+        return 0;
+    }
+    return lu_determinant(lu, lu.permutation_count());
+}
+
 
 }
