@@ -122,7 +122,7 @@ bool lu_decomposition(M& m) {
 
 template <typename M>
 typename M::value_type lu_determinant(const M& lu, size_t permutation_count) {
-    typename M::value_type det = (permutation_count & 1) == 0 ? 1 : -1;
+    typename M::value_type det = static_cast<typename M::value_type>((permutation_count & 1) == 0 ? 1 : -1);
     for (size_t i = 0; i < std::min(lu.rows(), lu.cols()); i++) {
         det *= lu(i, i);
     }

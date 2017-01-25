@@ -9,7 +9,7 @@ namespace lm {
 template <typename M>
 class transpose_storage: public matrix_decorator<transpose_storage, M> {
 public:
-    typedef matrix_decorator<transpose_storage, M> base_type;
+    typedef matrix_decorator<::lm::transpose_storage, M> base_type;
     typedef typename base_type::value_type value_type;
 
     transpose_storage() = default;

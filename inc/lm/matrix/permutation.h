@@ -10,7 +10,7 @@ namespace lm {
 template <typename M>
 class permutation_storage: public matrix_decorator<permutation_storage, M> {
 public:
-    typedef matrix_decorator<permutation_storage, M> base_type;
+    typedef matrix_decorator<::lm::permutation_storage, M> base_type;
     typedef typename base_type::value_type value_type;
 
     permutation_storage()  {

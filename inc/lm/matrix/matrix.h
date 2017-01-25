@@ -55,7 +55,7 @@ public:
     matrix_type& apply(const T& other, F func) {
         for (size_t i = 0; i < S::rows(); i++) {
             for (size_t j = 0; j < S::cols(); j++) {
-                cell(i, j) = func(cell(i, j), Traits::cell(other, i, j));
+                cell(i, j) = static_cast<value_type>( func(cell(i, j), Traits::cell(other, i, j)) );
             }
         }
         return *this;
