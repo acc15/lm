@@ -123,11 +123,6 @@ public:
         return assign(p);
     }
 
-    template <typename T, typename Traits = matrix_traits<T>>
-    matrix_type& operator=(const T& other) {
-        return assign<T>(other);
-    }
-
     template <typename T>
     matrix_type& operator+=(const T& other) {
         return add<T>(other);
