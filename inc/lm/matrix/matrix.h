@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <type_traits>
 
-#include <lm/algorithm.h>
+#include <lm/util/functional.h>
 #include <lm/matrix/algorithm.h>
 #include <lm/matrix/layout.h>
 #include <lm/matrix/traits.h>
@@ -153,6 +153,29 @@ public:
               typename = typename std::enable_if<std::is_same<value_matrix_type, P>::value>::type>
     matrix_type& operator*=(const T& other) {
         return product<T, P>(other);
+    }
+
+    template <typename R>
+    bool invert(R& inv) const {
+        return invert_matrix(*this, inv);
+    }
+
+    bool invert() {
+        value_matrix_type inv;
+        if (!invert(inv)) {
+            return false;
+        }
+        assign(inv);
+        return true;
+    }
+
+    template <typename R = value_matrix_type>
+    R operator~() const {
+        R inv;
+        if (!invert<R>(inv)) {
+            throw std::logic_error("attempt to inverse singular matrix");
+        }
+        return inv;
     }
 
     template <typename T>

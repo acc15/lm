@@ -2,7 +2,7 @@
 #include <vector>
 
 #include <catch.hpp>
-#include <lm/range.h>
+#include <lm/util/range.h>
 
 using lm::range;
 

@@ -3,8 +3,7 @@
 #include <vector>
 
 #include <lm/matrix/matrix.h>
-#include <lm/vec.h>
-
+#include <lm/vec/vec.h>
 
 using namespace lm;
 
@@ -205,7 +204,7 @@ TEST_CASE("dynamic_transpose", "[matrix]") {
 
 }
 
-TEST_CASE("flat_array_matrix::ref", "[matrix]") {
+TEST_CASE("flat_array_matrix::reference_matrix_type", "[matrix]") {
 
     float x[] = {1,2,3,4,5,6,7,8,9};
     typename flat_array_matrix<float, 3, 3>::reference_matrix_type m(x);

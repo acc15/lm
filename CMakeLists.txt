@@ -5,11 +5,12 @@ project(lm)
 
 include_directories(inc)
 
-set(SOURCE_FILES inc/lm/random_access_iterator.h
-    inc/lm/range.h
-    inc/lm/algorithm.h
-    inc/lm/generic_vec.h
-    inc/lm/vec.h
+set(SOURCE_FILES
+    inc/lm/util/random_access_iterator.h
+    inc/lm/util/range.h
+    inc/lm/util/functional.h
+    inc/lm/vec/generic_vec.h
+    inc/lm/vec/vec.h
     inc/lm/matrix/layout.h
     inc/lm/matrix/traits.h
     inc/lm/matrix/fwd.h
