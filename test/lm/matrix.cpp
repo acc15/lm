@@ -252,9 +252,14 @@ TEST_CASE("determinant", "[matrix]") {
             {  4,  1,  3 },
             {  1, -2, -2 }
         },
+        {
+            {  1,  2,  3 },
+            {  4,  5,  6 },
+            {  7,  8,  9 }
+        }
     };
 
-    float expected_det[] = { -27.f, 204.f, 54.f };
+    float expected_det[] = { -27.f, 204.f, 54.f, 0.f };
     for (size_t i = 0; i < sizeof(expected_det) / sizeof(float); i++) {
         array_matrix<float, 3, 3> m(test_matricies[i]);
         float det = determinant(m);
@@ -263,3 +268,66 @@ TEST_CASE("determinant", "[matrix]") {
 
 }
 
+TEST_CASE("invert", "[matrix]") {
+
+    float test_matricies[][3][3] = {
+        {
+            {  9,  1,  2 },
+            {  3,  4,  5 },
+            {  6,  7,  8 }
+        },
+        {
+            {  9,  2,  3 },
+            {  4,  5,  6 },
+            {  7,  8,  9 }
+        },
+        {
+            {  1, -2,  3 },
+            {  4,  0,  6 },
+            { -7,  8,  9 }
+        }
+    };
+
+    float exp_matricies[][3][3] = {
+        {
+            { 1.f/9, -2.f/9, 1.f/9 },
+            { -2.f/9, -20.f/9, 13.f/9 },
+            { 1.f/9, 19.f/9, -11.f/9 },
+        },
+        {
+            { 0.125f, -0.25f, 0.125f },
+            { -0.25f, -2.5f, 1.75f },
+            { 0.125f, 29.f/12, -37.f/24 }
+        },
+        {
+            { -4.f/17, 7.f/34, -1.f/17 },
+            { -13.f/34, 5.f/34, 1.f/34 },
+            { 8.f/51, 1.f/34, 2.f/51 }
+        }
+    };
+
+    for (size_t i = 0; i < std::extent<decltype(test_matricies), 0>::value; i++) {
+        typename array_matrix<float, 3, 3>::reference_matrix_type m(test_matricies[i]);
+        array_matrix<float, 3, 3> inv;
+        REQUIRE( invert_matrix(m, inv) );
+
+        typename array_matrix<float, 3, 3>::reference_matrix_type e(exp_matricies[i]);
+        for (size_t i = 0; i < e.rows(); i++) {
+            for (size_t j = 0; j < e.cols(); j++) {
+                REQUIRE( inv(i, j) == Approx(e(i, j)) );
+            }
+        }
+    }
+
+}
+
+TEST_CASE("lu_decomposition must return false if singular", "[matrix]") {
+    array_matrix<float, 3, 3> m = {1,2,3,4,5,6,7,8,9};
+    REQUIRE_FALSE(lu_decomposition(m));
+}
+
+TEST_CASE("invert fails if singular", "[matrix]") {
+    array_matrix<float, 3, 3> m = {1,2,3,4,5,6,7,8,9};
+    array_matrix<float, 3, 3> inv;
+    REQUIRE_FALSE( invert_matrix(m, inv) );
+}

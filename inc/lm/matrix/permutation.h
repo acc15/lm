@@ -9,11 +9,33 @@
 
 namespace lm {
 
+template <size_t Size>
+struct permutation_vec_traits {
+    typedef size_t type[Size];
+
+    static void resize(type& t, size_t s) {
+        assert( s == Size );
+    }
+};
+
+template<>
+struct permutation_vec_traits<0> {
+    typedef std::vector<size_t> type;
+
+    static void resize(type& t, size_t s) {
+        t.resize(s);
+    }
+};
+
+
 template <typename M>
 class permutation_storage: public matrix_decorator<permutation_storage, M> {
 public:
     typedef matrix_decorator<::lm::permutation_storage, M> base_type;
     typedef typename base_type::value_type value_type;
+
+    typedef permutation_vec_traits<base_type::Rows> vec_traits;
+    typedef typename vec_traits::type pm;
 
     permutation_storage()  {
         reset();
@@ -75,32 +97,17 @@ public:
         return _c;
     }
 
+    const pm& permutation_vec() const {
+        return _p;
+    }
 
 private:
-    struct static_vec {
-        typedef size_t type[base_type::Rows];
-
-        static void resize(type& t, size_t s) {
-            assert( s == base_type::Rows );
-        }
-    };
-
-    struct dynamic_vec {
-        typedef std::vector<size_t> type;
-
-        static void resize(type& t, size_t s) {
-            t.resize(s);
-        }
-    };
-
-    typedef typename std::conditional<base_type::Rows != 0, static_vec, dynamic_vec>::type vec_traits;
-
     void resize_p(size_t sz) {
         vec_traits::resize(_p, sz);
     }
 
     M _m;
-    typename vec_traits::type _p;
+    pm _p;
     size_t _c;
 
 };

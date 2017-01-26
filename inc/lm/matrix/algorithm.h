@@ -117,7 +117,7 @@ bool lu_decomposition(M& m) {
             m(k, i) /= m(i, i);
         }
     }
-    return true;
+    return m(l - 1, l - 1) != 0;
 }
 
 template <typename M>
@@ -135,20 +135,21 @@ bool invert_matrix(const M& m, R& r) {
     if (!lu_decomposition(lu)) {
         return false;
     }
-
-    // TODO permutate cols using permutation vector from lu
-    // typename permutation_matrix<M>::reference_matrix_type pr(r);
-    // pr.permutations(lu.permutations());
-    // make_identity(pr);
-    //lu_substitute(lu, pr);
-    return true;
-
+    for (size_t i = 0; i < r.rows(); i++) {
+        for (size_t j = 0; j < r.cols(); j++) {
+            r(i, lu.permutation_vec()[j]) = static_cast<typename M::value_type>(i == j ? 1 : 0);
+        }
+    }
+    return lu_substitute(lu, r);
 }
 
 template <typename M, typename R>
-void lu_substitute(const M& lu, R& r) {
+bool lu_substitute(const M& lu, R& r) {
     typedef typename M::value_type value_type;
     for (size_t j = 0; j < lu.cols(); j++) {
+        if (lu(j, j) == 0) {
+            return false;
+        }
         for (size_t i = 1; i < lu.rows();i++) {
             for (size_t k = 0; k < i; k++) {
                 r(i, j) -= lu(i, k) * r(k, j);
@@ -161,6 +162,7 @@ void lu_substitute(const M& lu, R& r) {
             r(i, j) /= lu(i, i);
         }
     }
+    return true;
 }
 
 template <typename M>

@@ -143,7 +143,7 @@ public:
         return value_matrix_type(*this).subtract<T>(other);
     }
 
-    template <typename T, typename P = typename matrix_product<value_matrix_type, T>::matrix_type>
+    template <typename T, typename P = typename matrix_product<value_matrix_type, T>::value_matrix_type>
     P operator*(const T& other) {
         return compute_product<T, P>(other);
     }
