@@ -223,9 +223,9 @@ TEST_CASE("flat_array_matrix::reference_matrix_type", "[matrix]") {
 
 TEST_CASE("container_matrix", "[matrix]") {
 
-    std::array<float, 9> x;
+    vec<float, 9> x;
 
-    typename container_matrix<std::array, float, 3, 3>::reference_matrix_type m(x);
+    typename container_matrix<vec, float, 3, 3>::reference_matrix_type m(x);
     m.assign<std::initializer_list<float>, range_matrix_traits<std::initializer_list<float>, 3, 3>>({ 1, 2, 3, 4, 5, 6, 7, 8, 9});
 
     for (size_t i = 0; i < x.size(); i++) {
@@ -329,4 +329,38 @@ TEST_CASE("invert fails if singular", "[matrix]") {
     array_matrix<float, 3, 3> m = {1,2,3,4,5,6,7,8,9};
     array_matrix<float, 3, 3> inv;
     REQUIRE_FALSE( invert_matrix(m, inv) );
+}
+
+TEST_CASE("multiply 2d vec on 3d matrix", "[matrix]") {
+
+    array_matrix<float, 4, 4> m = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
+    vec<float, 2> v = {1,2};
+
+    container_matrix<vec, float, 2, 1>::reference_matrix_type vec_m(v);
+
+    /*
+                     1  2  3  4
+                     5  6  7  8
+                     9  10 11 12
+                     13 14 15 16
+                    -------------
+        1, 2, 0, 0 | 11 14 XX XX
+
+
+                        1
+                        2
+                        0
+                        1
+         1  0  0  10    11
+         0  1  0  10    12
+         //0  0  1  0     0
+         //0  0  0  1     1
+
+    */
+
+    vec_m = m * vec_m;
+
+    REQUIRE( v[0] == 11 );
+    REQUIRE( v[1] == 14 );
+
 }

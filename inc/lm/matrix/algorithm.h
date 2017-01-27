@@ -49,10 +49,12 @@ P transpose(const M& m) {
 template <typename M, typename N, typename P = typename matrix_product<M, N>::value_matrix_type>
 void product(const M& m, const N& n, P& result) {
     result.resize(std::min(m.rows(), n.rows()), std::min(n.cols(), m.cols()));
+
+    size_t l = std::min(m.cols(), n.rows());
     for (size_t i = 0; i < result.rows(); i++) {
         for (size_t j = 0; j < result.cols(); j++) {
             typename M::value_type sum = 0;
-            for (size_t k = 0; k < m.cols(); k++) {
+            for (size_t k = 0; k < l; k++) {
                 sum += m(i, k) * n(k, j);
             }
             result(i, j) = sum;
