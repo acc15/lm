@@ -34,9 +34,7 @@ struct matrix_transpose {
 template <typename M, typename N>
 struct matrix_product {
     typedef typename std::conditional<M::Rows != 0,
-        typename matrix_with_size<M, N,
-            u_min<M::Rows, N::Rows>::value,
-            u_min<N::Cols, M::Cols>::value>::value_matrix_type,
+        typename matrix_with_size<M, N, N::Rows, M::Cols>::value_matrix_type,
         M>::type value_matrix_type;
 };
 

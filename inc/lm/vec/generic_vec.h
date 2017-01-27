@@ -134,7 +134,7 @@ protected:
 
     template <typename Other, typename Func>
     vec_type& transform(const Other& other, Func func) {
-        auto i = base_type::begin();
+        typename base_type::iterator i = base_type::begin();
         auto r = range(other, base_type::size());
         lm::transform(i, base_type::end(), r.begin(), r.end(), i, func);
         return as_vec();

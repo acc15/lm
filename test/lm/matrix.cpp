@@ -333,34 +333,31 @@ TEST_CASE("invert fails if singular", "[matrix]") {
 
 TEST_CASE("multiply 2d vec on 3d matrix", "[matrix]") {
 
-    array_matrix<float, 4, 4> m = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
-    vec<float, 2> v = {1,2};
-
-    container_matrix<vec, float, 2, 1>::reference_matrix_type vec_m(v);
+    array_matrix<float, 4, 4> m = {
+        1,0,0,10,
+        0,1,0,10,
+        0,0,1,0,
+        0,0,0,1
+    };
+    container_matrix<vec, float, 4, 1> vec_m = { 5, -2, 0, 1 };
 
     /*
-                     1  2  3  4
-                     5  6  7  8
-                     9  10 11 12
-                     13 14 15 16
-                    -------------
-        1, 2, 0, 0 | 11 14 XX XX
-
-
                         1
                         2
                         0
                         1
          1  0  0  10    11
          0  1  0  10    12
-         //0  0  1  0     0
-         //0  0  0  1     1
+         0  0  1  0     0
+         0  0  0  1     1
 
     */
 
-    vec_m = m * vec_m;
+    vec_m.pre_product(m);
 
-    REQUIRE( v[0] == 11 );
-    REQUIRE( v[1] == 14 );
+    vec<float, 2> vec = vec_m.value();
+
+    REQUIRE( vec[0] == 15 );
+    REQUIRE( vec[1] == 8 );
 
 }

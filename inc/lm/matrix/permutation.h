@@ -33,6 +33,7 @@ class permutation_storage: public matrix_decorator<permutation_storage, M> {
 public:
     typedef matrix_decorator<::lm::permutation_storage, M> base_type;
     typedef typename base_type::value_type value_type;
+    typedef typename base_type::storage_type storage_type;
 
     typedef permutation_vec_traits<base_type::Rows> vec_traits;
     typedef typename vec_traits::type pm;
@@ -100,6 +101,9 @@ public:
     const pm& permutation_vec() const {
         return _p;
     }
+
+    const storage_type& value() const { return _m; }
+    storage_type& value() { return _m; }
 
 private:
     void resize_p(size_t sz) {

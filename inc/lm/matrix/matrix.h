@@ -87,21 +87,30 @@ public:
     }
 
     template <typename T, typename P = typename matrix_product<value_matrix_type, T>::value_matrix_type>
-    void compute_product(const T& other, P& p) const {
+    void product(const T& other, P& p) const {
         lm::product<matrix_type, T, P>(*this, other, p);
     }
 
     template <typename T, typename P = typename matrix_product<value_matrix_type, T>::value_matrix_type>
-    P compute_product(const T& other) const {
+    P product(const T& other) const {
         return lm::product<matrix_type, T, P>(*this, other);
     }
 
     template <typename T,
               typename P = typename matrix_product<matrix_type, T>::value_matrix_type,
               typename = typename std::enable_if<std::is_same<value_matrix_type, P>::value>::type>
-    matrix_type& product(const T& other) {
+    matrix_type& pre_product(const T& other) {
         P p;
-        compute_product<T, P>(other, p);
+        lm::product<T, matrix_type, P>(other, *this, p);
+        return assign(p);
+    }
+
+    template <typename T,
+              typename P = typename matrix_product<matrix_type, T>::value_matrix_type,
+              typename = typename std::enable_if<std::is_same<value_matrix_type, P>::value>::type>
+    matrix_type& post_product(const T& other) {
+        P p;
+        lm::product<matrix_type, T, P>(*this, other, p);
         return assign(p);
     }
 
@@ -134,35 +143,35 @@ public:
     }
 
     template <typename T>
-    value_matrix_type operator+(const T& other) {
+    value_matrix_type operator+(const T& other) const {
         return value_matrix_type(*this).add<T>(other);
     }
 
     template <typename T>
-    value_matrix_type operator-(const T& other) {
+    value_matrix_type operator-(const T& other) const {
         return value_matrix_type(*this).subtract<T>(other);
     }
 
     template <typename T, typename P = typename matrix_product<value_matrix_type, T>::value_matrix_type>
-    P operator*(const T& other) {
-        return compute_product<T, P>(other);
+    P operator*(const T& other) const {
+        return product<T, P>(other);
     }
 
     template <typename T,
               typename P = typename matrix_product<value_matrix_type, T>::value_matrix_type,
               typename = typename std::enable_if<std::is_same<value_matrix_type, P>::value>::type>
     matrix_type& operator*=(const T& other) {
-        return product<T, P>(other);
+        return post_product<T, P>(other);
     }
 
     template <typename R>
-    bool invert(R& inv) const {
+    bool inverse(R& inv) const {
         return invert_matrix(*this, inv);
     }
 
     bool invert() {
         value_matrix_type inv;
-        if (!invert(inv)) {
+        if (!inverse(inv)) {
             return false;
         }
         assign(inv);
@@ -172,8 +181,8 @@ public:
     template <typename R = value_matrix_type>
     R operator~() const {
         R inv;
-        if (!invert<R>(inv)) {
-            throw std::logic_error("attempt to inverse singular matrix");
+        if (!inverse<R>(inv)) {
+            throw std::logic_error("can't inverse singular matrix");
         }
         return inv;
     }

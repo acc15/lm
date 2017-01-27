@@ -10,20 +10,20 @@ namespace lm {
 template <template <class> class D, typename M>
 struct matrix_decorator {
 
-    typedef typename std::remove_reference<M>::type wrapped_type;
-    typedef matrix<D<wrapped_type>> value_matrix_type;
-    typedef matrix<D<wrapped_type&>> reference_matrix_type;
-    typedef typename wrapped_type::value_type value_type;
+    typedef typename std::remove_reference<M>::type storage_type;
+    typedef matrix<D<storage_type>> value_matrix_type;
+    typedef matrix<D<storage_type&>> reference_matrix_type;
+    typedef typename storage_type::value_type value_type;
 
     enum {
-        Rows = wrapped_type::Rows,
-        Cols = wrapped_type::Cols
+        Rows = storage_type::Rows,
+        Cols = storage_type::Cols
     };
 
     template <size_t R, size_t C>
     struct with_size {
         typedef typename D<
-            typename matrix_with_size<wrapped_type, wrapped_type, R, C>::value_matrix_type
+            typename matrix_with_size<storage_type, storage_type, R, C>::value_matrix_type
         >::value_matrix_type value_matrix_type;
     };
 

@@ -72,6 +72,9 @@ public:
         _c = cols;
     }
 
+    const storage_type& value() const { return _m; }
+    storage_type& value() { return _m; }
+
 private:
     M _m;
     size_t _r, _c;

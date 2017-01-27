@@ -23,6 +23,7 @@ public:
     };
 
     typedef typename std::remove_reference<M>::type storage_type;
+
     typedef matrix<static_matrix_storage<storage_type, MT>> value_matrix_type;
     typedef matrix<static_matrix_storage<storage_type&, MT>> reference_matrix_type;
 
@@ -80,6 +81,14 @@ public:
 
     void resize(size_t rows, size_t cols) {
         assert( rows == Rows && cols == Cols );
+    }
+
+    const storage_type& value() const {
+        return _m;
+    }
+
+    storage_type& value() {
+        return _m;
     }
 
 private:

@@ -11,6 +11,7 @@ class transpose_storage: public matrix_decorator<transpose_storage, M> {
 public:
     typedef matrix_decorator<::lm::transpose_storage, M> base_type;
     typedef typename base_type::value_type value_type;
+    typedef typename base_type::storage_type storage_type;
 
     transpose_storage() = default;
 
@@ -39,6 +40,9 @@ public:
     void swap_col(size_t c1, size_t c2) {
         _m.swap_row(c1, c2);
     }
+
+    const storage_type& value() const { return _m; }
+    storage_type& value() { return _m; }
 
 private:
     M _m;
