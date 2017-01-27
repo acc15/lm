@@ -33,6 +33,18 @@ public:
         operator=(val);
     }
 
+    /**
+     * \brief Computes squared vector length.
+     *
+     * This computes sum of squared elements:
+     *  \f$\sum_{i=1}^n E_i^2\f$
+     *
+     * For example if `size()` is 2 (2d vector) this is same as:
+     *  \f$x^2 + y^2\f$
+     *
+     * \sa length()
+     * \return squared vector length
+     */
     value_type length_square() const {
         value_type result = value_type();
         for (size_t i = 0; i < base_type::size(); i++) {
@@ -42,10 +54,36 @@ public:
         return result;
     }
 
+    /**
+     * \brief Computes vector length.
+     *
+     * This computes square root of squared element sum:
+     *  \f$\sqrt{\sum_{i=1}^n E_i^2}\f$
+     *
+     * For example if `size()` is 2 (2d vector) this is same as:
+     *  \f$\sqrt{x^2 + y^2}\f$
+     *
+     * \sa length_square()
+     * \return vector length
+     */
     value_type length() const {
         return static_cast<value_type>(sqrt(length_square()));
     }
 
+
+    /**
+     * \brief Computes scalar product of two vectors.
+     *
+     * This computes products sum of elements:
+     *  \f$\sum_{i=1}^{size()} (E_{this} * E_{other})\f$
+     *
+     * For example if `size()` is 2 (2d vectors) this is same as:
+     *  \f$x_1 * x_2 + y_1 * y_2\f$
+     *
+     * \tparam Vec vector type
+     * \param other product vector
+     * \return scalar product of `this` and `other` vectors
+     */
     template <typename Vec>
     value_type scalar_product(const Vec& other) {
 
@@ -62,11 +100,33 @@ public:
         return product;
     }
 
+    /**
+     * \brief Assigns `this` vector to `other`.
+     *
+     * Note that if `other` vector is shorter than `this` then partial assign is performed.
+     * For example if `this` vector has `size() == 4` and `other.size() == 2`
+     * then only first 2 elements will be assigned - and the others 2 remains unchanged.
+     *
+     * \tparam Other type of vector to assign
+     * \param other vector to assign
+     * \return reference to `this` vector
+     */
     template <typename Other>
     vec_type& operator=(const Other& other) {
         return transform(other, return_2nd());
     }
 
+    /**
+     * \brief Tests two vectors for equality.
+     *
+     * Vectors are considered equal if all following conditions apply:
+     *  - vectors have same `size()`
+     *  - all elements (comparing by element `operator==`) are equal
+     *
+     * \sa operator!=()
+     * \tparam Other type of vector to test for equality
+     * \param other vector to test for equality
+     */
     template <typename Other>
     bool operator==(const Other& other) const {
         auto r = range(other, base_type::size());
@@ -76,16 +136,48 @@ public:
         return std::equal(base_type::begin(), base_type::end(), r.begin());
     }
 
+    /**
+     * \brief Tests two vectors for inequality.
+     *
+     * Vectors are considered inequal if at least one following conditions apply:
+     *  - vectors have different `size()`
+     *  - any `this` element is not equal to `other` element (comparing by element `operator==`)
+     *
+     * This is inversion of operator==().
+     *
+     * \see operator==()
+     * \tparam Other type of vector to test for equality
+     * \param other vector to test for equality
+     */
     template <typename Other>
     bool operator!=(const Other& other) const {
         return !operator==(other);
     }
 
+    /**
+     * \brief Negates `this` vectors.
+     *
+     * Negates all elements of `this` vectors. This is the same as:
+     *
+     *  \f${*this} = \begin{array}{c} -a_1 \\ -a_2 \\ -a_3 \\ \vdots \\ -a_n \end{array}\f$
+     *
+     * \sa operator-()
+     * \return reference to `this` vector
+     */
     vec_type& negate() {
         std::transform(base_type::begin(), base_type::end(), base_type::begin(), std::negate<void>());
         return as_vec();
     }
 
+    /**
+     * \brief Computes negated vector.
+     *
+     * Returns vector with all elements negated:
+     *  \f$\begin{array}{c} -a_1 \\ -a_2 \\ -a_3 \\ \vdots \\ -a_n \end{array}\f$
+     *
+     * \see negate()
+     * \return negated vector
+     */
     vec_type operator-() const {
         return vec_type(as_vec()).negate();
     }
