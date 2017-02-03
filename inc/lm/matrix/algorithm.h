@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @brief Generic matrix algorithms
+ */
+
 #pragma once
 
 #include <cstddef>
@@ -7,8 +12,37 @@
 #include <lm/matrix/traits.h>
 #include <lm/matrix/permutation.h>
 
+//! lm namespace
 namespace lm {
 
+/**
+ * @brief Swap two rows `r1` and `r2` in matrix `m`
+ *
+ * For example, if 3x3 matrix `m` is:
+ *
+ *  @f[
+ *  \begin{pmatrix}
+ *      \textbf{a} & \textbf{b} & \textbf{c} \\
+ *      d & e & f \\
+ *      \textbf{g} & \textbf{h} & \textbf{i}
+ *  \end{pmatrix}
+ *  @f]
+ *
+ * and `r1 == 0`, `r2 == 2` then after execution matrix `m` becomes:
+ *
+ *  @f[
+ *  \begin{pmatrix}
+ *      \textbf{g} & \textbf{h} & \textbf{i} \\
+ *      d & e & f \\
+ *      \textbf{a} & \textbf{b} & \textbf{c}
+ *  \end{pmatrix}
+ *  @f]
+ *
+ * @tparam M matrix type
+ * @param m matrix in which rows must be swapped
+ * @param r1 first row index
+ * @param r2 second row index
+ */
 template <typename M>
 void swap_row(M& m, size_t r1, size_t r2) {
     if (r1 == r2) {
@@ -19,6 +53,34 @@ void swap_row(M& m, size_t r1, size_t r2) {
     }
 }
 
+/**
+ * @brief Swap two columns `c1` and `c2` in matrix `m`
+ *
+ * For example, if 3x3 matrix `m` is:
+ *
+ *  @f[
+ *  \begin{pmatrix}
+ *      \textbf{a} & b & \textbf{c} \\
+ *      \textbf{d} & e & \textbf{f} \\
+ *      \textbf{g} & h & \textbf{i}
+ *  \end{pmatrix}
+ *  @f]
+ *
+ * and `c1 == 0`, `c2 == 2` then after execution matrix `m` becomes:
+ *
+ *  @f[
+ *  \begin{pmatrix}
+ *      \textbf{c} & b & \textbf{a} \\
+ *      \textbf{f} & e & \textbf{d} \\
+ *      \textbf{i} & h & \textbf{g}
+ *  \end{pmatrix}
+ *  @f]
+ *
+ * @tparam M matrix type
+ * @param m matrix in which columns must be swapped
+ * @param r1 first column index
+ * @param r2 second column index
+ */
 template <typename M>
 void swap_col(M& m, size_t c1, size_t c2) {
     if (c1 == c2) {
@@ -29,6 +91,22 @@ void swap_col(M& m, size_t c1, size_t c2) {
     }
 }
 
+/**
+ * @brief Stores transposed matrix
+ *
+ * Computes and stores transposed matrix `m` in `result` matrix, i.e.
+ * @f[
+ *  result = M^\top
+ * @f]
+ *
+ * By default if type of matrix `m` is static then `result` is also static with swapped row and column counts.
+ * However its possible to specify type `P` explicitly with dynamic, or bigger-sized static matrix
+ *
+ * @tparam M matrix type
+ * @tparam P transposed matrix type
+ * @param m matrix to transpose
+ * @param result transposed matrix
+ */
 template <typename M, typename P = typename matrix_transpose<M>::value_matrix_type>
 void transpose(const M& m, P& result) {
     result.resize(m.cols(), m.rows());
@@ -39,6 +117,20 @@ void transpose(const M& m, P& result) {
     }
 }
 
+/**
+ * @brief Computes transposed matrix
+ *
+ * Returns transposed matrix `m`, i.e.
+ * @f$ M^\top @f$
+ *
+ * By default if type of matrix `m` is static then `result` is also static with swapped row and column counts.
+ * However its possible to specify type `P` explicitly with dynamic, or bigger-sized static matrix
+ *
+ * @tparam M matrix type
+ * @tparam P transposed matrix type
+ * @param m matrix to transpose
+ * @return transposed matrix
+ */
 template <typename M, typename P = typename matrix_transpose<M>::value_matrix_type>
 P transpose(const M& m) {
     P result;
