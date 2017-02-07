@@ -97,8 +97,7 @@ public:
     }
 
     template <typename T,
-              typename P = typename matrix_product<matrix_type, T>::value_matrix_type,
-              typename = typename std::enable_if<std::is_same<value_matrix_type, P>::value>::type>
+              typename P = typename matrix_product<T, matrix_type>::value_matrix_type>
     matrix_type& pre_product(const T& other) {
         P p;
         lm::product<T, matrix_type, P>(other, *this, p);
@@ -106,8 +105,7 @@ public:
     }
 
     template <typename T,
-              typename P = typename matrix_product<matrix_type, T>::value_matrix_type,
-              typename = typename std::enable_if<std::is_same<value_matrix_type, P>::value>::type>
+              typename P = typename matrix_product<matrix_type, T>::value_matrix_type>
     matrix_type& post_product(const T& other) {
         P p;
         lm::product<matrix_type, T, P>(*this, other, p);
@@ -116,7 +114,7 @@ public:
 
     template <typename P = typename matrix_transpose<value_matrix_type>::value_matrix_type>
     void compute_transposed(P& p) const {
-        return lm::transpose<value_matrix_type, P>(*this, p);
+        lm::transpose<value_matrix_type, P>(*this, p);
     }
 
     template <typename P = typename matrix_transpose<value_matrix_type>::value_matrix_type>
@@ -124,10 +122,8 @@ public:
         return lm::transpose<value_matrix_type, P>(*this);
     }
 
-    template <typename P = typename matrix_transpose<value_matrix_type>::value_matrix_type,
-               typename = typename std::enable_if<std::is_same<value_matrix_type, P>::value>::type>
     matrix_type& transpose() {
-        P p;
+        value_matrix_type p;
         compute_transposed(p);
         return assign(p);
     }

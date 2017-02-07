@@ -6,16 +6,6 @@
 
 namespace lm {
 
-template <size_t a, size_t b>
-struct u_min {
-    static const size_t value = a < b ? a : b;
-};
-
-template <size_t a, size_t b>
-struct u_max {
-    static const size_t value = a > b ? a : b;
-};
-
 template <typename M, typename N, size_t R, size_t C, typename Enable = void>
 struct matrix_with_size {
     typedef N value_matrix_type;
@@ -33,8 +23,11 @@ struct matrix_transpose {
 
 template <typename M, typename N>
 struct matrix_product {
+
+    static_assert( M::Cols == 0 || N::Rows == 0 || M::Cols == static_cast<size_t>(N::Rows) , "matricies can't be multiplied" );
+
     typedef typename std::conditional<M::Rows != 0,
-        typename matrix_with_size<M, N, N::Rows, M::Cols>::value_matrix_type,
+        typename matrix_with_size<M, N, M::Rows, N::Cols>::value_matrix_type,
         M>::type value_matrix_type;
 };
 

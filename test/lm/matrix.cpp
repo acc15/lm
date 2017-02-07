@@ -111,23 +111,33 @@ TEST_CASE("subtract", "[matrix]") {
     REQUIRE(a3 == e);
 }
 
+//TEST_CASE("product of non-multipliable matricies", "[matrix]") {
+
+//    array_matrix<float, 3, 4> m1 = {1,2,3,4,5,6,7,8,9,10,11,12};
+//    array_matrix<float, 2, 3> m2 = {1,2,3,4,5,6};
+
+//    array_matrix<float, 3, 3> m3 = product(m1, m2);
+
+//}
+
 TEST_CASE("product", "[matrix]") {
 
-    array_matrix<float, 3, 3> m1 = {1,2,3,4,5,6,7,8,9};
-    array_matrix<float, 3, 3> m2 = m1;
+    array_matrix<float, 2, 3> m1 = {1,2,3,4,5,6};
+    array_matrix<float, 3, 4> m2 = {1,2,3,4,5,6,7,8,9,10,11,12};
+
+    array_matrix<float, 2, 4> a1 = product(m1, m2);
 
     vector_matrix<float> v1 = m1;
-    vector_matrix<float> v2 = m1;
+    vector_matrix<float> a2 = product(v1, m2);
 
-    array_matrix<float, 3, 3> a1 = product(m1, m2);
-    vector_matrix<float> a2 = product(m1, v1);
+    vector_matrix<float> v2 = m2;
     vector_matrix<float> a3 = product(v1, v2);
-    vector_matrix<float> a4 = product(v1, m1);
 
-    array_matrix<float, 3, 3> e = {
-        { 30, 36, 42 },
-        { 66, 81, 96 },
-        { 102, 126, 150 }
+    vector_matrix<float> a4 = product(m1, v2);
+
+    array_matrix<float, 2, 4> e = {
+        { 38, 44, 50, 56 },
+        { 83, 98, 113, 128 }
     };
 
     REQUIRE(a1 == e);

@@ -71,21 +71,6 @@ TEST_CASE("operator/", "[vec]") {
     REQUIRE( (v1 / 2) == (vec<int, 3>({2, 2, 3})) );
 }
 
-TEST_CASE("operator/ on zero", "[vec]") {
-
-    int k = 3;
-    int v = 0;
-
-    k /= v;
-
-//    vec<int, 3> v1 = {1,2,3};
-//    vec<int, 3> v2 = {0,0,0};
-
-//    v1 /= v2;
-
-
-}
-
 TEST_CASE("scalar_product()", "[vec]") {
     vec<int, 3> v = { 1, 2, 3 };
     vec<int, 3> v2 = { 4, 5, 6 };

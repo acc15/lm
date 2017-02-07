@@ -138,6 +138,24 @@ P transpose(const M& m) {
     return result;
 }
 
+/**
+ * @brief Computes product of matrix `m` and `n` and stores result in `result` matrix
+ *
+ * Matrix multiplication produces a matrix of @f$ m.rows() \times n.cols() @f$ with an expectation that @f$ m.cols() = n.rows() @f$.
+ *
+ * By default if type of matrix `m` and `n` is static then `result` is also static (actual type is same as matrix `m`) 
+ * with dimensions `m.rows()` and `n.cols()` respectively.
+ * If matrixes are static and can't be multiplied (i.e. `m.cols() != n.rows()`) then compilation error is generated
+ *
+ * Still its possible to specify type `P` explicitly with dynamic, or bigger-sized static matrix (in this case no static checks performed)
+ *
+ * @tparam M first matrix type
+ * @tparam N second matrix type
+ * @tparam P product matrix type
+ * @param m first matrix
+ * @param n first matrix
+ * @param result matrix to store product of m*n
+ */
 template <typename M, typename N, typename P = typename matrix_product<M, N>::value_matrix_type>
 void product(const M& m, const N& n, P& result) {
     assert(m.cols() == n.rows());
