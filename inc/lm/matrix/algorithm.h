@@ -16,7 +16,7 @@
 namespace lm {
 
 /**
- * @brief Swap two rows `r1` and `r2` in matrix `m`
+ * @brief Swap two rows `r1` and `r2` in matrix `m`.
  *
  * For example, if 3x3 matrix `m` is:
  *
@@ -54,7 +54,7 @@ void swap_row(M& m, size_t r1, size_t r2) {
 }
 
 /**
- * @brief Swap two columns `c1` and `c2` in matrix `m`
+ * @brief Swap two columns `c1` and `c2` in matrix `m`.
  *
  * For example, if 3x3 matrix `m` is:
  *
@@ -78,8 +78,8 @@ void swap_row(M& m, size_t r1, size_t r2) {
  *
  * @tparam M matrix type
  * @param m matrix in which columns must be swapped
- * @param r1 first column index
- * @param r2 second column index
+ * @param c1 first column index
+ * @param c2 second column index
  */
 template <typename M>
 void swap_col(M& m, size_t c1, size_t c2) {
@@ -92,7 +92,7 @@ void swap_col(M& m, size_t c1, size_t c2) {
 }
 
 /**
- * @brief Stores transposed matrix
+ * @brief Stores transposed matrix.
  *
  * Computes and stores transposed matrix `m` in `result` matrix, i.e.
  * @f[
@@ -100,7 +100,7 @@ void swap_col(M& m, size_t c1, size_t c2) {
  * @f]
  *
  * By default if type of matrix `m` is static then `result` is also static with swapped row and column counts.
- * However its possible to specify type `P` explicitly with dynamic, or bigger-sized static matrix
+ * However its possible to specify type `P` explicitly with dynamic, or bigger-sized static matrix.
  *
  * @tparam M matrix type
  * @tparam P transposed matrix type
@@ -118,13 +118,13 @@ void transpose(const M& m, P& result) {
 }
 
 /**
- * @brief Computes transposed matrix
+ * @brief Computes transposed matrix.
  *
  * Returns transposed matrix `m`, i.e.
  * @f$ M^\top @f$
  *
  * By default if type of matrix `m` is static then `result` is also static with swapped row and column counts.
- * However its possible to specify type `P` explicitly with dynamic, or bigger-sized static matrix
+ * However its possible to specify type `P` explicitly with dynamic, or bigger-sized static matrix.
  *
  * @tparam M matrix type
  * @tparam P transposed matrix type
@@ -139,15 +139,16 @@ P transpose(const M& m) {
 }
 
 /**
- * @brief Computes product of matrix `m` and `n` and stores result in `result` matrix
+ * @brief Computes product of matrix `m` and `n` and stores result in `result` matrix.
  *
  * Matrix multiplication produces a matrix of @f$ m.rows() \times n.cols() @f$ with an expectation that @f$ m.cols() = n.rows() @f$.
  *
  * By default if type of matrix `m` and `n` is static then `result` matrix is also static (actual type is same as matrix `m`)
  * with dimensions `m.rows()` and `n.cols()` respectively.
- * If matrixes are static and can't be multiplied (i.e. `m.cols() != n.rows()`) then compilation error is generated
+ * If matrixes are static and can't be multiplied (i.e. `m.cols() != n.rows()`) then compilation error is generated.
  *
- * Also its possible to specify type `P` explicitly with dynamic, or bigger-sized static matrix (in this case no static checks performed)
+ * Also its possible to specify type `P` explicitly with dynamic, or bigger-sized static matrix
+ * (in this case no static checks are performed).
  *
  * @tparam M first matrix type
  * @tparam N second matrix type
@@ -179,11 +180,12 @@ void product(const M& m, const N& n, P& result) {
  *
  * Matrix multiplication produces a matrix of @f$ m.rows() \times n.cols() @f$ with an expectation that @f$ m.cols() = n.rows() @f$.
  *
- * By default if type of matrix `m` and `n` is static then `result` matrix is also static (actual type is same as matrix `m`)
+ * By default if type of matrix `m` and `n` is static then `result` matrix is also static (actual type is same as matrix `m`).
  * with dimensions `m.rows()` and `n.cols()` respectively.
- * If both matricies are static and can't be multiplied (i.e. `m.cols() != n.rows()`) then compilation error is generated
+ * If both matricies are static and can't be multiplied (i.e. `m.cols() != n.rows()`) then compilation error is generated.
  *
- * Also its possible to specify type `P` explicitly with dynamic, or bigger-sized static matrix (in this case no static checks performed)
+ * Also its possible to specify type `P` explicitly with dynamic, or bigger-sized static matrix
+ * (in this case no static checks are performed).
  *
  * @tparam M first matrix type
  * @tparam N second matrix type
@@ -206,7 +208,7 @@ P product(const M& m, const N& n) {
  * @param n row index to begin search
  * @return index of best pivot row and a `bool` flag which indicates status of operation.
  *   `true` means success and pivoting row is found
- *   `false` means there is no suitable rows to perform LU-factorization and in general - that matrix `m` is singular
+ *   `false` means there is no suitable rows to perform LU-factorization and in general - that matrix `m` is singular.
  */
 template <typename M>
 std::pair<size_t, bool> find_lu_pivot(M& m, const size_t n) {
@@ -287,28 +289,6 @@ bool lu_decomposition(M& m) {
     return m(l - 1, l - 1) != 0;
 }
 
-template <typename M>
-void make_identity(M& m) {
-    for (size_t i = 0; i < m.rows(); i++) {
-        for (size_t j = 0; j < m.cols(); j++) {
-            m(i, j) = static_cast<typename M::value_type>(i == j ? 1 : 0);
-        }
-    }
-}
-
-template <typename M, typename R>
-bool invert_matrix(const M& m, R& r) {
-    permutation_matrix<M> lu(m);
-    if (!lu_decomposition(lu)) {
-        return false;
-    }
-    for (size_t i = 0; i < r.rows(); i++) {
-        for (size_t j = 0; j < r.cols(); j++) {
-            r(i, lu.permutation_vec()[j]) = static_cast<typename M::value_type>(i == j ? 1 : 0);
-        }
-    }
-    return lu_substitute(lu, r);
-}
 
 template <typename M, typename R>
 bool lu_substitute(const M& lu, R& r) {
@@ -332,6 +312,62 @@ bool lu_substitute(const M& lu, R& r) {
     return true;
 }
 
+
+/**
+ * @brief Make matrix `m` an identity matrix.
+ * @param m output matrix
+ */
+template <typename M>
+void make_identity(M& m) {
+    for (size_t i = 0; i < m.rows(); i++) {
+        for (size_t j = 0; j < m.cols(); j++) {
+            m(i, j) = static_cast<typename M::value_type>(i == j ? 1 : 0);
+        }
+    }
+}
+
+/**
+ * @brief Computes inversion matrix of `m` and stores result in matrix `r`.
+ *
+ * Inversion of matrix `m` is such matrix for which following condition apply:
+ *
+ * @f$ M^{-1} * M = M * M^{-1} = I @f$
+ * where @f$ M^{-1} @f$ is an inverted matrix and `I` is identity matrix.
+ *
+ * Matrix inversion is allowed only for square (`rows() == cols()`), non-singular (@f$ \det m \neq 0 @f$) matricies.
+ *
+ *
+ * @param m matrix to invert
+ * @param r matrix to store inverted matrix
+ * @return `true` if inversion succeds, `false` if matrix is singular and inverted matrix can't be computed.
+ */
+template <typename M, typename R>
+bool invert_matrix(const M& m, R& r) {
+    permutation_matrix<M> lu(m);
+    if (!lu_decomposition(lu)) {
+        return false;
+    }
+    for (size_t i = 0; i < r.rows(); i++) {
+        for (size_t j = 0; j < r.cols(); j++) {
+            r(i, lu.permutation_vec()[j]) = static_cast<typename M::value_type>(i == j ? 1 : 0);
+        }
+    }
+    return lu_substitute(lu, r);
+}
+
+/**
+ * @brief Computes determinant by the given LU-factorized matrix and row permutation count.
+ *
+ * Determinant of matrix which has all zeroes below main diagonal is a multiplication of its elements on main diagonal, i.e.:
+ *
+ * @f$ \det LU = (-1)^P \times \left(\displaystyle \prod_{i=1}^n m_{i,i}\right) @f$
+ *
+ * where `P` is count of performed row swaps.
+ *
+ * @param m LU-factorized matrix.
+ * @param permutation_count count of row swaps performed in LU-factorization process.
+ * @return determinant of factorized matrix `lu`
+ */
 template <typename M>
 typename M::value_type lu_determinant(const M& lu, size_t permutation_count) {
     typename M::value_type det = static_cast<typename M::value_type>((permutation_count & 1) == 0 ? 1 : -1);
@@ -341,6 +377,11 @@ typename M::value_type lu_determinant(const M& lu, size_t permutation_count) {
     return det;
 }
 
+/**
+ * @brief Computes determinant of a given matrix `m`.
+ * @param m matrix to compute determinant
+ * @return determinant of matrix `m`
+ */
 template <typename M>
 typename M::value_type determinant(const M& m) {
     permutation_matrix<M> lu(m);
