@@ -143,17 +143,17 @@ P transpose(const M& m) {
  *
  * Matrix multiplication produces a matrix of @f$ m.rows() \times n.cols() @f$ with an expectation that @f$ m.cols() = n.rows() @f$.
  *
- * By default if type of matrix `m` and `n` is static then `result` is also static (actual type is same as matrix `m`) 
+ * By default if type of matrix `m` and `n` is static then `result` matrix is also static (actual type is same as matrix `m`)
  * with dimensions `m.rows()` and `n.cols()` respectively.
  * If matrixes are static and can't be multiplied (i.e. `m.cols() != n.rows()`) then compilation error is generated
  *
- * Still its possible to specify type `P` explicitly with dynamic, or bigger-sized static matrix (in this case no static checks performed)
+ * Also its possible to specify type `P` explicitly with dynamic, or bigger-sized static matrix (in this case no static checks performed)
  *
  * @tparam M first matrix type
  * @tparam N second matrix type
  * @tparam P product matrix type
  * @param m first matrix
- * @param n first matrix
+ * @param n second matrix
  * @param result matrix to store product of m*n
  */
 template <typename M, typename N, typename P = typename matrix_product<M, N>::value_matrix_type>
@@ -173,6 +173,25 @@ void product(const M& m, const N& n, P& result) {
     }
 }
 
+
+/**
+ * @brief Computes and returns product of matrix `m` and `n`.
+ *
+ * Matrix multiplication produces a matrix of @f$ m.rows() \times n.cols() @f$ with an expectation that @f$ m.cols() = n.rows() @f$.
+ *
+ * By default if type of matrix `m` and `n` is static then `result` matrix is also static (actual type is same as matrix `m`)
+ * with dimensions `m.rows()` and `n.cols()` respectively.
+ * If both matricies are static and can't be multiplied (i.e. `m.cols() != n.rows()`) then compilation error is generated
+ *
+ * Also its possible to specify type `P` explicitly with dynamic, or bigger-sized static matrix (in this case no static checks performed)
+ *
+ * @tparam M first matrix type
+ * @tparam N second matrix type
+ * @tparam P product matrix type
+ * @param m first matrix
+ * @param n second matrix
+ * @return product of m*n
+ */
 template <typename M, typename N, typename P = typename matrix_product<M, N>::value_matrix_type>
 P product(const M& m, const N& n) {
     P result;
@@ -180,7 +199,15 @@ P product(const M& m, const N& n) {
     return result;
 }
 
-
+/**
+ * @brief Finds the best pivoting row for more stable LU-factorization results.
+ *
+ * @param m matrix in which pivoting row must be found
+ * @param n row index to begin search
+ * @return index of best pivot row and a `bool` flag which indicates status of operation.
+ *   `true` means success and pivoting row is found
+ *   `false` means there is no suitable rows to perform LU-factorization and in general - that matrix `m` is singular
+ */
 template <typename M>
 std::pair<size_t, bool> find_lu_pivot(M& m, const size_t n) {
 
@@ -209,6 +236,33 @@ std::pair<size_t, bool> find_lu_pivot(M& m, const size_t n) {
 
 }
 
+
+/**
+ * @brief Performs LU-factorization with row pivoting of a given matrix `m`.
+ *
+ * LU factorization is allowed only for square (`rows() == cols()`), non-singular (@f$ \det m \neq 0 @f$) matricies.
+ *
+ * Note that even if LU-factorization will fail (i.e. return `false`) the output matrix `m` may still be modified, so
+ * its unsafe to perform some tests on original (non-copied) matricies.
+ *
+ * To save a bit of memory, lower matrix is stored below main diagonal, upper matrix - on and above main diagonal.
+ *
+ * For example a result will be stored as follows:
+ *
+ * @f[
+ * \begin{pmatrix}
+ * U_{1,1} & U_{1,2} & \cdots & U_{1,n-1} & U_{1,n} \\
+ * L_{2,1} & U_{2,2} & \cdots & U_{2,n-1} & U_{2,n} \\
+ * \vdots & \vdots & \ddots & \vdots & \vdots \\
+ * L_{n-1,1} & L_{n-1,2} & \cdots & U_{n-1,n-1} & U_{n-1,n} \\
+ * L_{n,1} & L_{n,2} & \cdots & L_{n,n-1} & U_{n,n} \\
+ * \end{pmatrix}
+ * @f]
+ *
+ * @param m matrix to perform LU-factorization
+ * @return `true` if LU-factorization succeds, `false` if matrix is singular and LU-factorization can't be performed
+ *
+ */
 template <typename M>
 bool lu_decomposition(M& m) {
 
