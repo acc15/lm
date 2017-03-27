@@ -1,4 +1,6 @@
 #/!/bin/sh
 
 rm -rf build/doc
-doxygen doxygen.cfg
+doxygen
+
+google-chrome-stable build/doc/html/index.html
