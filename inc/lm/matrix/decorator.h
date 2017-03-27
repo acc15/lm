@@ -7,6 +7,10 @@
 
 namespace lm {
 
+/**
+ * @brief base class for matrix decorators
+ *
+ */
 template <template <class> class D, typename M>
 struct matrix_decorator {
 

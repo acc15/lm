@@ -35,10 +35,10 @@ public:
     bool operator<=(const iterator& other) const { return !operator>(other); }
     bool operator>=(const iterator& other) const { return !operator<(other); }
 
-    iterator& operator++() { _index = diff<true>(1); return *this; }
-    iterator& operator--() { _index = diff<false>(1); return *this; }
-    iterator& operator+=(size_type sz) { _index = diff<true>(sz); return *this; }
-    iterator& operator-=(size_type sz) { _index = diff<false>(sz); return *this; }
+    iterator& operator++() { return move<true>(1); }
+    iterator& operator--() { return move<false>(1); }
+    iterator& operator+=(size_type sz) { return move<true>(sz); }
+    iterator& operator-=(size_type sz) { return move<false>(sz); }
 
     iterator operator++(int) { return ++iterator(*this); }
     iterator operator--(int) { return --iterator(*this); }
@@ -53,8 +53,13 @@ public:
 private:
 
     template <bool Sign>
-    size_t diff(size_t offset) {
-        return Sign == Dir ? _index + offset : _index - offset;
+    iterator& move(size_t offset) {
+        if (Sign == Dir) {
+            _index += offset;
+        } else {
+            _index -= offset;
+        }
+        return *this;
     }
 
 
