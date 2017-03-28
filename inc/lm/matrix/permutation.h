@@ -4,29 +4,12 @@
 #include <cassert>
 
 #include <numeric>
+#include <vector>
 
+#include <lm/vec/vec_traits.h>
 #include <lm/matrix/decorator.h>
 
 namespace lm {
-
-template <size_t Size>
-struct permutation_vec_traits {
-    typedef size_t type[Size];
-
-    static void resize(type& t, size_t s) {
-        assert( s == Size );
-    }
-};
-
-template<>
-struct permutation_vec_traits<0> {
-    typedef std::vector<size_t> type;
-
-    static void resize(type& t, size_t s) {
-        t.resize(s);
-    }
-};
-
 
 template <typename M>
 class permutation_storage: public matrix_decorator<permutation_storage, M> {
@@ -35,8 +18,10 @@ public:
     typedef typename base_type::value_type value_type;
     typedef typename base_type::storage_type storage_type;
 
-    typedef permutation_vec_traits<base_type::Rows> vec_traits;
-    typedef typename vec_traits::type pm;
+    typedef typename std::conditional<base_type::Rows == 0,
+        vec_traits<std::vector<size_t>>,
+        vec_traits<size_t[ base_type::Rows ]> >::type pm_traits;
+    typedef typename pm_traits::type pm;
 
     permutation_storage()  {
         reset();
@@ -107,7 +92,7 @@ public:
 
 private:
     void resize_p(size_t sz) {
-        vec_traits::resize(_p, sz);
+        pm_traits::resize(_p, sz);
     }
 
     M _m;
