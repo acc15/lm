@@ -1,9 +1,9 @@
 #pragma once
 
 #include <cstddef>
-#include <cassert>
 #include <type_traits>
 
+#include <lm/util/assert.h>
 #include <lm/matrix/fwd.h>
 #include <lm/matrix/traits.h>
 #include <lm/matrix/layout.h>
@@ -80,7 +80,7 @@ public:
     }
 
     void resize(size_t rows, size_t cols) {
-        assert( rows == Rows && cols == Cols );
+        lm_assert( rows == Rows && cols == Cols, "static matricies can't be resized" );
     }
 
     const storage_type& value() const {

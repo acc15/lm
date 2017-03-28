@@ -46,7 +46,7 @@ private:
 
 };
 
-std::ostream& operator <<(std::ostream& stream, const assert_error& err) {
+inline std::ostream& operator <<(std::ostream& stream, const assert_error& err) {
     return stream << "Assertion (" << err.expr() << ") failed in " << err.file() << ":" << err.line() << ". Reason: " << err.what();
 }
 

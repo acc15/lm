@@ -8,6 +8,7 @@
 #include <cstddef>
 #include <algorithm>
 
+#include <lm/util/assert.h>
 #include <lm/matrix/type_util.h>
 #include <lm/matrix/traits.h>
 #include <lm/matrix/permutation.h>
@@ -159,7 +160,7 @@ P transpose(const M& m) {
  */
 template <typename M, typename N, typename P = typename matrix_product<M, N>::value_matrix_type>
 void product(const M& m, const N& n, P& result) {
-    assert(m.cols() == n.rows());
+    lm_assert(m.cols() == n.rows(), m.cols() << " must be equal to " << n.rows() );
 
     result.resize(m.rows(), n.cols());
 

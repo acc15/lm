@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstddef>
-#include <cassert>
 
 #include <numeric>
 #include <vector>
@@ -75,7 +74,7 @@ public:
 
     void reset() {
         _c = 0;
-        resize_p(rows());
+        pm_traits::resize(_p, rows());
         std::iota(std::begin(_p), std::end(_p), 0);
     }
 
@@ -91,9 +90,6 @@ public:
     storage_type& value() { return _m; }
 
 private:
-    void resize_p(size_t sz) {
-        pm_traits::resize(_p, sz);
-    }
 
     M _m;
     pm _p;

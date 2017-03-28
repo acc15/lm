@@ -12,4 +12,5 @@ TEST_CASE("vec_traits", "[array]") {
 
     REQUIRE( traits::size(v) == 32 );
 
+    REQUIRE_THROWS( traits::resize(v, 10) );
 }
