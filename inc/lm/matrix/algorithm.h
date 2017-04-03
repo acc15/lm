@@ -207,19 +207,18 @@ void product_homogeneous(const M& m, const N& n, P& result) {
     typedef typename P::value_type result_value;
 
     result.resize(std::min(m.rows(), n.rows()), std::min(m.cols(), n.cols()));
+
+    size_t d = std::min(m.cols(), n.rows());
+
     for (size_t i = 0; i < result.rows(); i++) {
         for (size_t j = 0; j < result.cols(); j++) {
             result_value sum = 0;
-
+            for (size_t k = 0; k < d; k++) {
+                sum += static_cast<result_value>(m(i, k) * n(k, j));
+            }
             if (m.cols() > n.rows()) {
-                for (size_t k = 0; k < m.cols(); k++) {
-                    sum += static_cast<result_value>(m(i, k) * n(k, j));
-                }
                 sum += static_cast<result_value>(n(n.rows() - 1, j));
             } else {
-                for (size_t k = 0; k < n.rows(); k++) {
-                    sum += static_cast<result_value>(m(i, k) * n(k, j));
-                }
                 sum += static_cast<result_value>(m(i, m.cols() - 1));
             }
             result(i, j) = sum;
