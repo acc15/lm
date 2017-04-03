@@ -19,15 +19,13 @@ struct matrix_decorator {
     typedef matrix<D<storage_type&>> reference_matrix_type;
     typedef typename storage_type::value_type value_type;
 
-    enum {
-        Rows = storage_type::Rows,
-        Cols = storage_type::Cols
-    };
+    constexpr static size_t Rows = storage_type::Rows;
+    constexpr static size_t Cols = storage_type::Cols;
 
     template <size_t R, size_t C>
     struct with_size {
         typedef typename D<
-            typename matrix_with_size<storage_type, storage_type, R, C>::value_matrix_type
+            typename matrix_with_size<storage_type, R, C>::value_matrix_type
         >::value_matrix_type value_matrix_type;
     };
 

@@ -17,10 +17,8 @@ class static_matrix_storage {
 public:
     typedef typename MT::value_type value_type;
 
-    enum {
-        Rows = MT::Rows,
-        Cols = MT::Cols
-    };
+    constexpr static size_t Rows = MT::Rows;
+    constexpr static size_t Cols = MT::Cols;
 
     typedef typename std::remove_reference<M>::type storage_type;
 

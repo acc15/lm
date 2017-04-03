@@ -11,17 +11,13 @@ namespace lm {
 template <typename T, typename = void>
 struct is_resizable {
     typedef T type;
-    enum {
-        value = false
-    };
+    constexpr static bool value = false;
 };
 
 template <typename T>
 struct is_resizable<T, decltype( std::declval<T>().resize(10) ) > {
     typedef T type;
-    enum {
-        value = true
-    };
+    constexpr static bool value = true;
 };
 
 template <typename T>

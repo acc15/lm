@@ -13,10 +13,8 @@ class flat_dynamic_storage {
 public:
     typedef typename M::value_type value_type;
 
-    enum {
-        Rows = 0,
-        Cols = 0
-    };
+    constexpr static size_t Rows = 0;
+    constexpr static size_t Cols = 0;
 
     typedef typename std::remove_reference<M>::type storage_type;
     typedef matrix<flat_dynamic_storage<storage_type, L>> value_matrix_type;

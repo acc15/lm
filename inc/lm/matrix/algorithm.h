@@ -160,6 +160,9 @@ P transpose(const M& m) {
  */
 template <typename M, typename N, typename P = typename matrix_product<M, N>::value_matrix_type>
 void product(const M& m, const N& n, P& result) {
+
+    static_assert( M::Cols == 0 || N::Rows == 0 || M::Cols == N::Rows, "matricies can't be multiplied" );
+
     lm_assert(m.cols() == n.rows(), m.cols() << " must be equal to " << n.rows() );
 
     result.resize(m.rows(), n.cols());
@@ -169,6 +172,55 @@ void product(const M& m, const N& n, P& result) {
             typename M::value_type sum = 0;
             for (size_t k = 0; k < n.rows(); k++) {
                 sum += m(i, k) * n(k, j);
+            }
+            result(i, j) = sum;
+        }
+    }
+}
+
+
+/**
+ * @brief Computes product of matrix `m` and `n` and stores result in `result` matrix.
+ *
+ * Matrix multiplication produces a matrix of @f$ m.rows() \times n.cols() @f$ with an expectation that @f$ m.cols() = n.rows() @f$.
+ *
+ * By default if type of matrix `m` and `n` is static then `result` matrix is also static (actual type is same as matrix `m`)
+ * with dimensions `m.rows()` and `n.cols()` respectively.
+ * If matrixes are static and can't be multiplied (i.e. `m.cols() != n.rows()`) then compilation error is generated.
+ *
+ * Also its possible to specify type `P` explicitly with dynamic, or bigger-sized static matrix
+ * (in this case no static checks are performed).
+ *
+ * @tparam M first matrix type
+ * @tparam N second matrix type
+ * @tparam P product matrix type
+ * @param m first matrix
+ * @param n second matrix
+ * @param result matrix to store product of m*n
+ */
+template <typename M, typename N, typename P = typename matrix_product<M, N>::value_matrix_type>
+void product_homogeneous(const M& m, const N& n, P& result) {
+
+    static_assert( M::Cols == 0 || N::Rows == 0 || M::Cols == N::Rows,
+                   "matricies can't be multiplied" );
+
+    typedef typename P::value_type result_value;
+
+    result.resize(std::min(m.rows(), n.rows()), std::min(m.cols(), n.cols()));
+    for (size_t i = 0; i < result.rows(); i++) {
+        for (size_t j = 0; j < result.cols(); j++) {
+            result_value sum = 0;
+
+            if (m.cols() > n.rows()) {
+                for (size_t k = 0; k < m.cols(); k++) {
+                    sum += static_cast<result_value>(m(i, k) * n(k, j));
+                }
+                sum += static_cast<result_value>(n(n.rows() - 1, j));
+            } else {
+                for (size_t k = 0; k < n.rows(); k++) {
+                    sum += static_cast<result_value>(m(i, k) * n(k, j));
+                }
+                sum += static_cast<result_value>(m(i, m.cols() - 1));
             }
             result(i, j) = sum;
         }

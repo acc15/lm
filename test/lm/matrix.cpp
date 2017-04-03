@@ -371,3 +371,26 @@ TEST_CASE("multiply 2d vec on 3d matrix", "[matrix]") {
     REQUIRE( vec[1] == 8 );
 
 }
+
+TEST_CASE("homogenuous_product", "[matrix]") {
+
+
+    array_matrix<float, 4, 4> m = {
+        1,0,0,10,
+        0,1,0,10,
+        0,0,1,0,
+        0,0,0,1
+    };
+
+
+    container_matrix<vec, float, 2, 1> n = { 1, 2 };
+
+    vec<float, 2> v;
+    container_matrix<vec, float, 2, 1>::reference_matrix_type r(v);
+
+    //lm::product_homogeneous(m, n, r);
+
+
+}
+
+

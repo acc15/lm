@@ -23,7 +23,8 @@ set(SOURCE_FILES
     inc/lm/matrix/dynamic.h
     inc/lm/matrix/algorithm.h
     inc/lm/matrix/matrix.h
-    inc/lm/matrix/type_util.h)
+    inc/lm/matrix/type_util.h
+    inc/lm/transform/transform.h)
 
 set(TEST_FILES test/main.cpp
     test/lm/assert.cpp
