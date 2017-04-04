@@ -1,8 +1,10 @@
 #pragma once
 
-#include <sstream>
+#include <string>
+
 #ifndef NDEBUG
 
+#include <sstream>
 #define lm_assert(cond, msg) ((cond) \
     ? 0 \
     : throw lm::assert_error(static_cast<std::ostringstream&>(std::ostringstream() << msg).str(), #cond, __FILE__, __LINE__))
