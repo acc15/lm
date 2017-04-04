@@ -16,7 +16,7 @@ public:
     typedef random_access_iterator<impl_type, value_type, false> reverse_iterator;
     typedef random_access_iterator<const impl_type, const value_type, false> const_reverse_iterator;
 
-    size_t size() const {
+    constexpr size_t size() const {
         return Size;
     }
 
@@ -28,7 +28,7 @@ public:
         return impl().at(idx);
     }
 
-    bool empty() const {
+    constexpr bool empty() const {
         return Size == 0;
     }
 

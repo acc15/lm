@@ -201,8 +201,8 @@ void product(const M& m, const N& n, P& result) {
 template <typename M, typename N, typename P = typename matrix_product<M, N>::value_matrix_type>
 void product_homogeneous(const M& m, const N& n, P& result) {
 
-    static_assert( M::Cols == 0 || N::Rows == 0 || M::Cols == N::Rows,
-                   "matricies can't be multiplied" );
+//    static_assert( M::Cols == 0 || N::Rows == 0 || std::min(M::Cols, N::Cols) == std::min(N::Rows, M::Rows),
+//                   "matricies can't be multiplied" );
 
     typedef typename P::value_type result_value;
 
@@ -217,9 +217,9 @@ void product_homogeneous(const M& m, const N& n, P& result) {
                 sum += static_cast<result_value>(m(i, k) * n(k, j));
             }
             if (m.cols() > n.rows()) {
-                sum += static_cast<result_value>(n(n.rows() - 1, j));
-            } else {
                 sum += static_cast<result_value>(m(i, m.cols() - 1));
+            } else if (m.cols() < n.rows()) {
+                sum += static_cast<result_value>(n(n.rows() - 1, j));
             }
             result(i, j) = sum;
         }

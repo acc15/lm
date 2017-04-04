@@ -20,7 +20,7 @@ public:
 
     typedef typename base_type::value_type value_type;
 
-    generic_vec() : base_type() {
+    constexpr generic_vec() : base_type() {
     }
 
     template <typename Other>

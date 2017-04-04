@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.6)
 project(lm)
 
+set (CMAKE_CXX_STANDARD 14)
+
 #set_property( GLOBAL PROPERTY USE_FOLDERS ON)
 
 include_directories(inc)

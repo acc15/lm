@@ -25,9 +25,7 @@ template <typename M, typename N>
 struct matrix_product {
     typedef typename std::conditional<M::Rows != 0, // M is static?
         typename std::conditional<N::Cols != 0, // N is static?
-            typename matrix_with_size<M,
-                (M::Rows < N::Rows ? M::Rows : N::Rows),
-                (N::Cols < M::Cols ? N::Cols : M::Cols)>::value_matrix_type, // both is static
+            typename matrix_with_size<M, M::Rows, N::Cols>::value_matrix_type, // both is static
             N // N is dynamic
         >::type,
         M // M is dynamic

@@ -139,12 +139,12 @@ public:
 
     template <typename T>
     value_matrix_type operator+(const T& other) const {
-        return value_matrix_type(*this).add<T>(other);
+        return value_matrix_type(*this).template add<T>(other);
     }
 
     template <typename T>
     value_matrix_type operator-(const T& other) const {
-        return value_matrix_type(*this).subtract<T>(other);
+        return value_matrix_type(*this).template subtract<T>(other);
     }
 
     template <typename T, typename P = typename matrix_product<value_matrix_type, T>::value_matrix_type>
