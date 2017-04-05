@@ -22,8 +22,8 @@ public:
     template <typename T = M, typename = typename std::enable_if<std::is_reference<T>::value && std::is_same<T, M>::value>::type>
     transpose_storage(M ref) : _m(ref) {}
 
-    size_t rows() const { return _m.cols(); }
-    size_t cols() const { return _m.rows(); }
+    constexpr size_t rows() const { return _m.cols(); }
+    constexpr size_t cols() const { return _m.rows(); }
 
     value_type& at(size_t row, size_t col) {
         return _m.at(col, row);

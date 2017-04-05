@@ -391,4 +391,28 @@ TEST_CASE("homogenuous_product", "[matrix]") {
 
 }
 
+//template <size_t Count>
+//class B {
+//public:
+//    constexpr size_t value() { return Count; }
+//};
 
+
+//template <typename T>
+//class A {
+
+//public:
+//    T b;
+
+//    constexpr size_t value() { return b.value(); }
+
+//};
+
+
+
+//TEST_CASE("constexpr of decorator", "[matrix]") {
+
+//    int k[A<B<10>>().value()];
+
+
+//}

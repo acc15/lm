@@ -11,14 +11,14 @@ struct matrix_traits {
     typedef T container_type;
     typedef typename T::value_type value_type;
 
-    constexpr static size_t Rows = T::Rows;
-    constexpr static size_t Cols = T::Cols;
+//    constexpr static size_t Rows = T::Rows;
+//    constexpr static size_t Cols = T::Cols;
 
-    static size_t rows(const container_type& m) {
+    constexpr static size_t rows(const container_type& m) {
         return m.rows();
     }
 
-    static size_t cols(const container_type& m) {
+    constexpr static size_t cols(const container_type& m) {
         return m.cols();
     }
 
@@ -40,9 +40,6 @@ struct matrix_traits<T, typename std::enable_if<
     typedef typename std::remove_reference<T>::type container_type;
     typedef typename std::remove_all_extents< container_type >::type value_type;
 
-    constexpr static size_t Rows = std::extent<container_type, 0>::value;
-    constexpr static size_t Cols = std::extent<container_type, 1>::value;
-
     template <size_t Rows, size_t Cols>
     struct with_size {
         typedef matrix_traits<value_type[Rows][Cols]> traits;
@@ -56,12 +53,12 @@ struct matrix_traits<T, typename std::enable_if<
         return m[row][col];
     }
 
-    static size_t rows(const container_type& m) {
-        return Rows;
+    constexpr static size_t rows(const container_type& m) {
+        return std::extent<container_type, 0>::value;
     }
 
-    static size_t cols(const container_type& m) {
-        return Cols;
+    constexpr static size_t cols(const container_type& m) {
+        return std::extent<container_type, 1>::value;
     }
 
 };
@@ -93,9 +90,6 @@ struct range_matrix_traits {
     typedef typename V::value_type value_type;
     typedef V container_type;
 
-    constexpr static size_t Rows = R;
-    constexpr static size_t Cols = C;
-
     static const value_type& cell(container_type& m, size_t row, size_t col) {
         return *(m.begin() + Layout::compute_flat_index(row, col, R, C));
     }
@@ -104,12 +98,12 @@ struct range_matrix_traits {
         return *(m.begin() + Layout::compute_flat_index(row, col, R, C));
     }
 
-    static size_t rows(const container_type& m) {
-        return Rows;
+    constexpr static size_t rows(const container_type& m) {
+        return R;
     }
 
-    static size_t cols(const container_type& m) {
-        return Cols;
+    constexpr static size_t cols(const container_type& m) {
+        return C;
     }
 
 };
@@ -120,9 +114,6 @@ struct flat_matrix_traits {
     typedef T container_type;
     typedef V value_type;
 
-    constexpr static size_t Rows = R;
-    constexpr static size_t Cols = C;
-
     static const value_type& cell(const container_type& m, size_t row, size_t col) {
         return m[L::compute_flat_index(row, col, R, C)];
     }
@@ -131,12 +122,12 @@ struct flat_matrix_traits {
         return m[L::compute_flat_index(row, col, R, C)];
     }
 
-    static size_t rows(const container_type& m) {
-        return Rows;
+    constexpr static size_t rows(const container_type& m) {
+        return R;
     }
 
-    static size_t cols(const container_type& m) {
-        return Cols;
+    constexpr static size_t cols(const container_type& m) {
+        return C;
     }
 };
 

@@ -161,7 +161,7 @@ P transpose(const M& m) {
 template <typename M, typename N, typename P = typename matrix_product<M, N>::value_matrix_type>
 void product(const M& m, const N& n, P& result) {
 
-    static_assert( M::Cols == 0 || N::Rows == 0 || M::Cols == N::Rows, "matricies can't be multiplied" );
+    //static_assert( M::Cols == 0 || N::Rows == 0 || M::Cols == N::Rows, "matricies can't be multiplied" );
 
     lm_assert(m.cols() == n.rows(), m.cols() << " must be equal to " << n.rows() );
 

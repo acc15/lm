@@ -17,8 +17,10 @@ class static_matrix_storage {
 public:
     typedef typename MT::value_type value_type;
 
-    constexpr static size_t Rows = MT::Rows;
-    constexpr static size_t Cols = MT::Cols;
+    constexpr static bool resizable = false;
+
+//    constexpr static size_t Rows = MT::Rows;
+//    constexpr static size_t Cols = MT::Cols;
 
     typedef typename std::remove_reference<M>::type storage_type;
 
@@ -43,7 +45,10 @@ public:
     template <typename T>
     static_matrix_storage(const std::initializer_list<T>& m) {
         static_cast<value_matrix_type*>(this)->template assign<const std::initializer_list<T>,
-                range_matrix_traits<std::initializer_list<T>, Rows, Cols, row_major_layout>>(m);
+                range_matrix_traits<std::initializer_list<T>,
+                value_matrix_type().rows(),
+                value_matrix_type().cols(),
+                row_major_layout>>(m);
     }
 
     // copy constructor
@@ -57,11 +62,11 @@ public:
     static_matrix_storage(M m) : _m(m) {
     }
 
-    size_t rows() const {
+    constexpr size_t rows() const {
         return MT::rows(_m);
     }
 
-    size_t cols() const {
+    constexpr size_t cols() const {
         return MT::cols(_m);
     }
 
@@ -78,7 +83,7 @@ public:
     }
 
     void resize(size_t rows, size_t cols) {
-        lm_assert( rows == Rows && cols == Cols, "static matricies can't be resized" );
+        lm_assert( rows == static_matrix_storage::rows() && cols == static_matrix_storage::cols(), "static matricies can't be resized" );
     }
 
     const storage_type& value() const {

@@ -44,8 +44,8 @@ public:
         reset();
     }
 
-    size_t rows() const { return _m.rows(); }
-    size_t cols() const { return _m.cols(); }
+    constexpr size_t rows() const { return _m.rows(); }
+    constexpr size_t cols() const { return _m.cols(); }
 
     value_type& at(size_t row, size_t col) {
         return _m.at(_p[row], col);
